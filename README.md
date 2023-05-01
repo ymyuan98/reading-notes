@@ -13,6 +13,8 @@ The ultimate goal is to cultivate a good reading habit.
 Here is an instruction of reading academic papers (great thanks to Professor Lucy Gao for sharing this website!): 
 [A guide to read academic papers](https://github.com/jtleek/readingpapers). 
 
+Always be critical! 
+
 When reading a paper, always pay attention to the questions listed below (stealed from Prof. Yongjin Park's QP requirements): 
 
 
@@ -50,7 +52,9 @@ When reading a paper, always pay attention to the questions listed below (steale
 The target of reading a book is to study a new field. 
 So I guess the point here is to write down frameworks and also technical details - whatever I believe is important - provided in the book. 
 
-## So let's get started! 
+## So... 
+
+Let's get started! 
 
 
 
