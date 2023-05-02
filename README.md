@@ -29,11 +29,11 @@ When reading a paper, always pay attention to the questions listed below (steale
   - How did the author(s) find the solution? 
   - What was a novel contribution beyond traditional approaches?
 
+
 - **Significance** (summarize it briefly): 
   - Why is this an interesting problem? 
   - What can be learned by studying this problem? 
   - Why is it exciting for you? 
-  - Author contribution: 
     
 
 - **Limitations/challenges** (summarize it briefly):
@@ -54,7 +54,7 @@ So I guess the point here is to write down frameworks and also technical details
 
 ## So... 
 
-Let's get started! 
+Let's start reading!  
 
 
 
