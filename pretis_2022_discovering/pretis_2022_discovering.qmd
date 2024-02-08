@@ -1,0 +1,98 @@
+---
+title: "Reading Note: Discovering What Mattered: Answering Reverse Causal Questions by Detecting Unknown Treatment Assignment and Timing as Breaks in Panel Models"
+author: "Ming Yuan"
+format: 
+  html:
+    fig-width: 8
+    fig-height: 4
+    code-fold: true
+editor: visual
+---
+
+> [Pretis, Felix, and Moritz Schwarz. "Discovering what mattered: answering reverse causal questions by detecting unknown treatment assignment and timing as breaks in panel models." Available at SSRN 4022745 (2022).](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4022745)
+
+## Keywords
+
+Panel data (=longitudinal data without dropout(?)), two-way fixed effects, treatment, policy evaluation, difference-in-differences; break detection, indicator saturation, adaptive LASSO, machine learning.
+
+## Highlight
+
+-   This paper concerns **reverse causal questions, i.e., "What causes Y?"**, instead of forward causal questions ("Does X cause Y?") that have been generally discussed in previous literature.
+
+-   The authors place the concept of reverse causal questions into the domain of **variable and model selection**, and model the reverse causal questions through the detection of unknown treatment assignment and timing as **structural breaks** (anomaly) in fixed effects panel models.
+
+## Methodology
+
+### Setting
+
+-   Consider a panel of $N$ units over $T$ time periods where one group is treated with a single treatment from time $t=q$ onwards.
+
+-   $d=1$ for the treated group (or individual) and $d=0$ for the untreated.
+
+-   $y_t(0)$ the outcome in the control group and $y_t(1)$ the outcome in the treated group at time $t$.
+
+-   The treatment effect at time $t$ due to treatment occurring from time $t=q$ onwards is given by the difference $y_t(1) - y_t(0)$.
+
+-   Average treatment effect on the treated $\tau_t$: $\tau_t = \mathbb{E}[y_t(1)-y_t(0)|d=1]$.
+
+**Assumptions:**.
+
+1.  No anticipation of treatment: the potential outcome for a unit prior to treatment is identical to the untreated units: $$\mathbb{E}[y_t(1)-y_t(0)|d=1]=0, \text{ for } t < q.$$
+
+2.  Trend assumption: For any units in the treated or control group, the change in the potential outcome in the absence of treatment is identical over the same time period. $$
+    \mathbb{E}[y_t(0) - y_{t=1}(0)|d] = \mathbb{E}[y_t(0) - y_{t=1}(0)] = \theta_t, \text{ for } t=2, \ldots, T.
+    $$
+
+3.  There is at least one untreated unit (positivity assumption).
+
+4.  (Further assumption of constant treatment effect): $\tau_t = \tau$.
+
+**Estimands:**
+
+Then the observed outcome is represented as
+
+$$
+y_t = y_t(0) + d[y_t(1) - y_t(0)]
+$$
+
+The expected outcome conditional on treatment is:
+
+$$
+\mathbb{E}[y_t|d] = \mathbb{E}[y_t(0)|d] + d \times \tau_t.
+$$
+
+The change in $y_t$ over time in absence of treatment as: $$
+g_t(0) = y_t(0) - y_{t=1}(0) 
+$$ and under the common trend assumption we have that $\mathbb{E}[g_t(0)|d] = \mathbb{E}[g_t(0)]=\theta_t$.
+
+Thus, $$
+\mathbb{E}[y_{t=1}(0)|d]= \lambda + \xi d,
+$$
+
+where $\xi$ denotes the average pre-treatment difference between the treated and untreated groups and $\lambda$ denotes the average level of $y$ for the untreated. (???!)
+
+Hence, the expected value of $y_t$ conditional on treatment is: $$
+\mathbb{E}[y_t|d] = \lambda + \xi d + \theta_t + d \times \tau_t
+$$
+
+Assume the treatment effect is contant over time, $\tau_t=\tau$. Then, we have: $$
+\mathbb{E}[y_t|d] = \lambda + \xi d + \theta_t, \text{ for } t < q \\
+= \lambda + \xi d + \theta_t + d \times \tau, \text{ for } t \geq q. 
+$$
+
+It can be consistently estimated using a TWFE estimator: $$
+y_{i,t} = c_i + g_t + \tau w_{i,t} + u_{i,t}, 
+$$ with $w_{i,t} = d_i \times q_t$ where $d_i$ is an indicator for whether the individual is treated, $q_t$ an indicator for the post treatment period, $c_i$ denote individual fixed effect, and $g_t$ time fixed effect.
+
+As we identify the average treatment effect as a step-shift of magnitude $\tau$ at time $q$ in the treated unit's intercept: $$
+\mathbb{E}[y_{i,t} | d_i = 1] = c_i + \tau \times 1_{t\geq q} + g_t = c_{i,t} + g_t, 
+$$ where $$
+c_{i,t} = \begin{cases}
+c_i  & \text{ for } t < q \\
+c_i + \tau  & \text{ for } t \geq q
+\end{cases}
+$$
+
+....
+
+> The consequential idea: Allowing different sizes of step-shift $\tau_{j,s}$ at different time point (and for different treated units?). Then, select $\tau_{j,s}$.
