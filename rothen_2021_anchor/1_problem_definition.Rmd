@@ -1,0 +1,7 @@
+
+> Rothenhäusler D, Meinshausen N, Bühlmann P, Peters J. Anchor regression: Heterogeneous data meet causality. Journal of the Royal Statistical Society Series B: Statistical Methodology. 2021 Apr;83(2):215-46.
+
+# 1. Problem Definition
+
+-   Target: the paper considers the problem of **predicting a response variable from a set of covariates whose (joint) underlying distribution differs from that of the training data**.
+
