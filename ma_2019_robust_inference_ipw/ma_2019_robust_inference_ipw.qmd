@@ -1,0 +1,44 @@
+---
+title: "Reading Note: Robust Inference Using Inverse Probability Weighting"
+author: "Ming Yuan"
+format: 
+  html:
+    fig-width: 8
+    fig-height: 4
+    code-fold: true
+editor: visual
+---
+
+> [Ma, Xinwei, and Jingshen Wang. "Robust inference using inverse probability weighting." *Journal of the American Statistical Association* 115.532 (2020): 1851-1860.](https://www.tandfonline.com/doi/full/10.1080/01621459.2019.1660173)
+
+## Keywords
+
+Inverse probability weighting; trimming; robust inference; bias correction; heavy tail.
+
+## Highlights
+
+-   Show that the IPW estimator can have different (Gaussian or non-Gaussian) asymptotic distributions, depending on how "close to zero" the probability weights are and how large the trimming threshold is.
+
+-   Propose an inference procedure that is robust not only to small probability weights entering the IPW estimator but also to a wide range of trimming threshold choices (by adapting to these different asymptotic distributions).
+
+-   The robustness is achieved by employing resampling techniques and by correcting a non-negligible trimming bias.
+
+-   Also propose a method for choosing the trimming threshold by minimizing an empirical analogue of the asymptotic mean squared error.
+
+-   Show that the proposed inference procedure remains valid with the use of a data-driven trimming threshold.
+
+## Introduction
+
+Previously, small propensity scores (probability weights) can be detrimental to statistical inference and thus observations with probability weights below a certain threshold are often excluded from subsequent statistical analysis.
+
+However, the exact amount of trimming is usually ad hoc and will affect the performance of the IPW estimator and the corresponding confidence interval in nontrivial ways.
+
+(Trimmed) IPW estimator is given by 
+$$
+\hat{\theta}_{n,b_n} = \frac{1}{n} \sum_{i=1}^n \frac{D_i Y_i}{\hat{e}(X_i)} \mathbb{I}_{\hat{e}(X_i) \geq b_n},
+$$
+where $D_i \in \{0,1\}$ is binary, $Y_i$ is the outcome of interest, 
+$e(X_i) = P(D_i = 1|X_i)$ is the probability weighting conditional on the covariates
+with $\hat{e}(X_i)$ being its estimate, and $b_n$ is the trimming threshold (the untrimmed IPW estimator is a special case with $b_n = 0$). 
+
+> Comments: very theoretical....
