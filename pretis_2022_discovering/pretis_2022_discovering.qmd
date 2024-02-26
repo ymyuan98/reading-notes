@@ -96,3 +96,11 @@ $$
 ....
 
 > The consequential idea: Allowing different sizes of step-shift $\tau_{j,s}$ at different time point (and for different treated units?). Then, select $\tau_{j,s}$.
+
+## Method
+
+The adaptive LASSO implementation:
+
+$$
+\arg\min_{c,g,\tau} \frac{1}{NT} \sum_{i=1}^N \sum_{t=1}^T \left(y_{i,t} - c_i-g_t - \sum_{j=1}^N\sum_{s=2}^T \tau_{j,s}\mathbb{I}_{\{i=j,t \geq s\}} \right)^2 + \lambda \sum_{j=1}^N \sum_{s=2}^T v_{j,s}|\tau_{j,s}|.
+$$
