@@ -1,0 +1,128 @@
+---
+title: "Reading note: covariate balancing for causal inference on categorical and continuous treatments"
+format: 
+  html:
+    fig-width: 8
+    fig-height: 4
+    code-fold: true
+editor: visual
+---
+
+> [Lee, Seong-ho, Yanyuan Ma, and Xavier de Luna. "Covariate balancing for causal inference on categorical and continuous treatments." Econometrics and Statistics (2022).](https://www.sciencedirect.com/science/article/pii/S2452306222000077?casa_token=1wPBlu0u6D0AAAAA:j6BqlD3l2RwTX1ENjAdhbVAAh8tAqsUsfomP3hIwtX0N1hD8JRHIcz8VLB7G7cYJFH1PizM7-Pfu)
+
+## Keywords
+
+Average causal effects; double robust; semiparamatric efficiency bound; dose-response function...
+
+## Abstract
+
+"Novel estimators of causal effects for **categorical and continuous treatments** are proposed by using an **optimal covariate balancing strategy for inverse probability weighting**. The resulting estimators are shown to be consistent and asymptotically normal for causal contrasts of interest, either when the model explaining the treatment assignment is correctly specified, or when the correct set of bases for the outcome models has been chosen and the assignment model is sufficiently rich.
+
+For the categorical treatment case, the estimator attains the semiparametric efficiency bound when all models are correctly specified. For the continuous case, the causal parameter of interest is a function of the treatment dose. The latter is not parametrized and the estimators proposed are shown to have bias and variance of the classical nonparametric rate. Asymptotic results are complemented with simulations illustrating the finite sample properties..."
+
+## Motivation
+
+Foundation work:\
+\> [Fan, Jianqing, et al. "Optimal covariate balancing conditions in propensity score estimation." Journal of Business & Economic Statistics 41.1 (2022): 97-110.](https://www.tandfonline.com/doi/full/10.1080/07350015.2021.2002159)
+
+## Methods part 1: categorical treatments
+
+### Balancing scores and preliminaries on estimation
+
+-   $A=0, 1, \cdots, K$: $K+1$ treatments.\
+-   $Y^0, \cdots, Y^K$: potential outcomes.\
+-   $\mathbf{X}_i \in \mathbb{R}^d$: pre-treatment covariates.\
+-   $(A_i, Y_i, \mathbf{X}_i), \ i=1, \cdots, n$: random samples.
+
+Assumptions:\
+- $Y_i = Y_i^k$ if $A_i = k$;\
+- $\mathbb{E}[Y_i^k|\mathbf{X}_i, A_i] = \mathbb{E}[Y_i^k|\mathbf{X}_i] \equiv m(k,\mathbf{X}_i)$;\
+- $\operatorname{Pr}(A_i = k|\mathbf{X}_i = \mathbf{x}) \equiv \pi_0(k,\mathbf{x}) > \delta > 0$ for all $k \in \{0, 1, \cdots, K\}$ and all $\mathbf{x}$, where $\pi_0(k, \mathbf{x})$ is named generalized propensity score.
+
+Let $\theta_k \equiv \mathbb{E}[Y_i^k]$ for $k=0, 1, \cdots, K$. Estimand of interest: $\theta_k - \theta_0$, if $k=0$ is a treatment level of reference.
+
+Consider a parametric working model $\pi(k, \mathbf{x}; \boldsymbol{\beta}) = \pi_0(k, \mathbf{x})$, with $\boldsymbol{\beta} \in \mathbb{R}^p$.
+
+Consider a **vector of basis functions**: $\mathbf{B}(k, \mathbf{X}): \mathbb{R}^{d+1} \rightarrow \mathbb{R}^q$, aiming at spanning $m(k, \mathbf{x})$.
+
+If models are correctly specified, then\
+- there exists a (true) value $\boldsymbol{\beta}_0$ with $$\pi(k, \mathbf{x}, \boldsymbol{\beta}_0) = \pi_0(k, \mathbf{x}), $$ - and there exists (a matrix of coefficients) $\boldsymbol{\alpha} = (\boldsymbol{\alpha}_0^\top, \cdots, \boldsymbol{\alpha}_K^T)^T$ with $$\boldsymbol{\alpha}_k^T \mathbf{B}(k, \mathbf{x}) = m(k, \mathbf{x}),$$ for all $k$ and $\mathbf{x}$. That is, for all (conditional) expectation of potential outcomes...
+
+The inverse probability weighting estimator for $\theta_k$ is 
+$$
+\hat{\theta}_k = n^{-1} \sum_{i=1}^n \frac{I(A_i = k)Y_i}{\pi(k, \mathbf{X}_i, \hat{\boldsymbol{\beta}})}.
+$$
+
+Then is to find the estimates $\hat{\boldsymbol{\beta}}$ by solving one of the two following conditions. 
+
+-   Option 1: $$\sum_{i=1}^n \left[\left\{\frac{I(A_i = k)}{\pi(k, \mathbf{X}_i, \boldsymbol{\beta})} - 1 \right\} \mathbf{B}(k, \mathbf{X}_i) - \left\{\frac{I(A_i = 0)}{\pi(0, \mathbf{X}_i, \boldsymbol{\beta})} - 1 \right\} \mathbf{B}(0, \mathbf{X}_i)  \right] = \mathbf{0}$$ at all $k=1, \cdots, K$, i.e. a system of $qK$ equations.
+
+> This option allows for biased estimation of $\hat{\theta}_k$ with the only aim to estimate the contrast $\theta_k - \theta_0$ without bias. If $\hat{\theta}_k$ is indeed biased, then $\hat{\theta}_k - \hat{\theta}_0$ will not be efficient.
+
+> Well, sounds like not a good choice?
+
+-   Option 2: 
+    $$\sum_{i=1}^n \left\{\frac{I(A_i = k)}{\pi(k, \mathbf{X}_i, \boldsymbol{\beta})} - 1 \right\} \mathbf{B}(k, \mathbf{X}_i) = \mathbf{0}
+    $$ 
+    at all $k=0, \cdots, K$, i.e., a system of $q(K+1)$ equations.
+
+> The asymptotic properties are built upont the estimator whose $\hat{\boldsymbol{\beta}}$ is yielded from this set of equations.
+
+Asymptotic properties...
+
+
+## Method part 2: Continuous treatments
+
+### Balancing scores and preliminaries on estimation
+
+-   treatment $A$, taking values $a$ in $[0, 1]$.
+-   potential outcome $Y(a)$, and assume that $Y(a)$ changes with $a$ smoothly.\
+-   $(A_i, Y_i, \mathbf{X}_i), \, i = 1, \cdots, n$
+
+Assumptions: - $\mathbb{E}[Y_i(a)|\mathbf{X}_i, A_i] = \mathbb{E}[Y_i(a)|\mathbf{X}_i]$;\
+- $\pi_0(a, \mathbf{x}) \equiv f_{A|\mathbf{X}}(a, \mathbf{x}) > \delta > 0$ for all $a\in[0,1]$ and all $\mathbf{x}$.
+
+-   $m(a, \mathbf{x}) \equiv \mathbb{E}[Y_i(a)|\mathbf{X}_i = \mathbf{x}]$.
+
+Estimand of interest:\
+- treatment-response function or dose-response function: $\theta(a) = \mathbb{E}[Y_i(a)]$, for $a \in [0, 1]$.\
+- treatment effect: the contrast, $\theta(a) - \theta(b)$.
+
+If the model is correctly specified, then   
+- there exists a (true) value $\boldsymbol{\beta}_0$ so that 
+$$
+\pi(a, \mathbf{x}, \boldsymbol{\beta}_0) = \pi_0(a, \mathbf{x}), 
+$$
+- and there exists $\boldsymbol{\alpha}$ such that 
+$$
+\boldsymbol{\alpha}^T \mathbf{B}(a, \mathbf{x}) = m(a, \mathbf{x})
+$$
+  for all $a\in [0,1]$ and all $\mathbf{x}$. 
+  
+
+Following the same considerations, 
+there are two different balancing conditions: 
+
+- Option 1: 
+  $$
+  \sum_{i=1}^n \left[\left\{ \frac{K_l(A_i - a)}{\pi(a, \mathbf{X}_i, \boldsymbol{\beta})}-1 \right\} \mathbf{B}(a, \mathbf{X}_i) - \left\{ \frac{K_l(A_i - b)}{\pi(b, \mathbf{X}_i, \boldsymbol{\beta})}-1 \right\} \mathbf{B}(b, \mathbf{X}_i) \right] = \mathbf{0}
+  $$
+  for two arbitrary $a, b$ values in $[0,1]$. 
+  
+- Option 2: 
+  $$
+  \sum_{i=1}^n \left\{ \frac{K_l(A_i - a)}{\pi(a, \mathbf{X}_i, \boldsymbol{\beta})} - 1 \right\} \mathbf{B}(a, \mathbf{X}_i) = \mathbf{0}. 
+  $$
+  at all $a \in [0,1]$. 
+  
+Here, $K_l(\cdot) = l^{-1} K(\cdot/l)$, where $K(\cdot)$ is a kernel function and $l$ is a bandwidth. 
+
+The inverse propensity weighting estimator 
+$$
+\hat{\theta}(a) = n^{-1}\sum_{i=1}^n \frac{K_h(A_i - a)Y_i}{\pi(a, \mathbf{X}_i, \hat{\boldsymbol{\beta}})}.
+$$
+for any $a$ within the range of observed values for $A_i$. 
+Here, $h$ is a bandwidth. 
+
+
+> Where is randomness?

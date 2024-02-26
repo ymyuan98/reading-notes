@@ -33,12 +33,8 @@ Previously, small propensity scores (probability weights) can be detrimental to 
 
 However, the exact amount of trimming is usually ad hoc and will affect the performance of the IPW estimator and the corresponding confidence interval in nontrivial ways.
 
-(Trimmed) IPW estimator is given by 
-$$
+(Trimmed) IPW estimator is given by $$
 \hat{\theta}_{n,b_n} = \frac{1}{n} \sum_{i=1}^n \frac{D_i Y_i}{\hat{e}(X_i)} \mathbb{I}_{\hat{e}(X_i) \geq b_n},
-$$
-where $D_i \in \{0,1\}$ is binary, $Y_i$ is the outcome of interest, 
-$e(X_i) = P(D_i = 1|X_i)$ is the probability weighting conditional on the covariates
-with $\hat{e}(X_i)$ being its estimate, and $b_n$ is the trimming threshold (the untrimmed IPW estimator is a special case with $b_n = 0$). 
+$$ where $D_i \in \{0,1\}$ is binary, $Y_i$ is the outcome of interest, $e(X_i) = P(D_i = 1|X_i)$ is the probability weighting conditional on the covariates with $\hat{e}(X_i)$ being its estimate, and $b_n$ is the trimming threshold (the untrimmed IPW estimator is a special case with $b_n = 0$).
 
 > Comments: very theoretical....

@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.549">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Reading note: covariate balancing for causal inference on categorical and continuous treatments</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="lee_2022_cg_and_cont_treat_files/libs/clipboard/clipboard.min.js"></script>
+<script src="lee_2022_cg_and_cont_treat_files/libs/quarto-html/quarto.js"></script>
+<script src="lee_2022_cg_and_cont_treat_files/libs/quarto-html/popper.min.js"></script>
+<script src="lee_2022_cg_and_cont_treat_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="lee_2022_cg_and_cont_treat_files/libs/quarto-html/anchor.min.js"></script>
+<link href="lee_2022_cg_and_cont_treat_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="lee_2022_cg_and_cont_treat_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="lee_2022_cg_and_cont_treat_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="lee_2022_cg_and_cont_treat_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="lee_2022_cg_and_cont_treat_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Reading note: covariate balancing for causal inference on categorical and continuous treatments</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<blockquote class="blockquote">
+<p><a href="https://www.sciencedirect.com/science/article/pii/S2452306222000077?casa_token=1wPBlu0u6D0AAAAA:j6BqlD3l2RwTX1ENjAdhbVAAh8tAqsUsfomP3hIwtX0N1hD8JRHIcz8VLB7G7cYJFH1PizM7-Pfu">Lee, Seong-ho, Yanyuan Ma, and Xavier de Luna. “Covariate balancing for causal inference on categorical and continuous treatments.” Econometrics and Statistics (2022).</a></p>
+</blockquote>
+<section id="keywords" class="level2">
+<h2 class="anchored" data-anchor-id="keywords">Keywords</h2>
+<p>Average causal effects; double robust; semiparamatric efficiency bound; dose-response function…</p>
+</section>
+<section id="abstract" class="level2">
+<h2 class="anchored" data-anchor-id="abstract">Abstract</h2>
+<p>“Novel estimators of causal effects for <strong>categorical and continuous treatments</strong> are proposed by using an <strong>optimal covariate balancing strategy for inverse probability weighting</strong>. The resulting estimators are shown to be consistent and asymptotically normal for causal contrasts of interest, either when the model explaining the treatment assignment is correctly specified, or when the correct set of bases for the outcome models has been chosen and the assignment model is sufficiently rich.</p>
+<p>For the categorical treatment case, the estimator attains the semiparametric efficiency bound when all models are correctly specified. For the continuous case, the causal parameter of interest is a function of the treatment dose. The latter is not parametrized and the estimators proposed are shown to have bias and variance of the classical nonparametric rate. Asymptotic results are complemented with simulations illustrating the finite sample properties…”</p>
+</section>
+<section id="motivation" class="level2">
+<h2 class="anchored" data-anchor-id="motivation">Motivation</h2>
+<p>Foundation work:<br>
+&gt; <a href="https://www.tandfonline.com/doi/full/10.1080/07350015.2021.2002159">Fan, Jianqing, et al.&nbsp;“Optimal covariate balancing conditions in propensity score estimation.” Journal of Business &amp; Economic Statistics 41.1 (2022): 97-110.</a></p>
+</section>
+<section id="methods-part-1-categorical-treatments" class="level2">
+<h2 class="anchored" data-anchor-id="methods-part-1-categorical-treatments">Methods part 1: categorical treatments</h2>
+<section id="balancing-scores-and-preliminaries-on-estimation" class="level3">
+<h3 class="anchored" data-anchor-id="balancing-scores-and-preliminaries-on-estimation">Balancing scores and preliminaries on estimation</h3>
+<ul>
+<li><span class="math inline">\(A=0, 1, \cdots, K\)</span>: <span class="math inline">\(K+1\)</span> treatments.<br>
+</li>
+<li><span class="math inline">\(Y^0, \cdots, Y^K\)</span>: potential outcomes.<br>
+</li>
+<li><span class="math inline">\(\mathbf{X}_i \in \mathbb{R}^d\)</span>: pre-treatment covariates.<br>
+</li>
+<li><span class="math inline">\((A_i, Y_i, \mathbf{X}_i), \ i=1, \cdots, n\)</span>: random samples.</li>
+</ul>
+<p>Assumptions:<br>
+- <span class="math inline">\(Y_i = Y_i^k\)</span> if <span class="math inline">\(A_i = k\)</span>;<br>
+- <span class="math inline">\(\mathbb{E}[Y_i^k|\mathbf{X}_i, A_i] = \mathbb{E}[Y_i^k|\mathbf{X}_i] \equiv m(k,\mathbf{X}_i)\)</span>;<br>
+- <span class="math inline">\(\operatorname{Pr}(A_i = k|\mathbf{X}_i = \mathbf{x}) \equiv \pi_0(k,\mathbf{x}) &gt; \delta &gt; 0\)</span> for all <span class="math inline">\(k \in \{0, 1, \cdots, K\}\)</span> and all <span class="math inline">\(\mathbf{x}\)</span>, where <span class="math inline">\(\pi_0(k, \mathbf{x})\)</span> is named generalized propensity score.</p>
+<p>Let <span class="math inline">\(\theta_k \equiv \mathbb{E}[Y_i^k]\)</span> for <span class="math inline">\(k=0, 1, \cdots, K\)</span>. Estimand of interest: <span class="math inline">\(\theta_k - \theta_0\)</span>, if <span class="math inline">\(k=0\)</span> is a treatment level of reference.</p>
+<p>Consider a parametric working model <span class="math inline">\(\pi(k, \mathbf{x}; \boldsymbol{\beta}) = \pi_0(k, \mathbf{x})\)</span>, with <span class="math inline">\(\boldsymbol{\beta} \in \mathbb{R}^p\)</span>.</p>
+<p>Consider a <strong>vector of basis functions</strong>: <span class="math inline">\(\mathbf{B}(k, \mathbf{X}): \mathbb{R}^{d+1} \rightarrow \mathbb{R}^q\)</span>, aiming at spanning <span class="math inline">\(m(k, \mathbf{x})\)</span>.</p>
+<p>If models are correctly specified, then<br>
+- there exists a (true) value <span class="math inline">\(\boldsymbol{\beta}_0\)</span> with <span class="math display">\[\pi(k, \mathbf{x}, \boldsymbol{\beta}_0) = \pi_0(k, \mathbf{x}), \]</span> - and there exists (a matrix of coefficients) <span class="math inline">\(\boldsymbol{\alpha} = (\boldsymbol{\alpha}_0^\top, \cdots, \boldsymbol{\alpha}_K^T)^T\)</span> with <span class="math display">\[\boldsymbol{\alpha}_k^T \mathbf{B}(k, \mathbf{x}) = m(k, \mathbf{x}),\]</span> for all <span class="math inline">\(k\)</span> and <span class="math inline">\(\mathbf{x}\)</span>. That is, for all (conditional) expectation of potential outcomes…</p>
+<p>The inverse probability weighting estimator for <span class="math inline">\(\theta_k\)</span> is <span class="math display">\[
+\hat{\theta}_k = n^{-1} \sum_{i=1}^n \frac{I(A_i = k)Y_i}{\pi(k, \mathbf{X}_i, \hat{\boldsymbol{\beta}})}.
+\]</span></p>
+<p>Then is to find the estimates <span class="math inline">\(\hat{\boldsymbol{\beta}}\)</span> by solving one of the two following conditions.</p>
+<ul>
+<li>Option 1: <span class="math display">\[\sum_{i=1}^n \left[\left\{\frac{I(A_i = k)}{\pi(k, \mathbf{X}_i, \boldsymbol{\beta})} - 1 \right\} \mathbf{B}(k, \mathbf{X}_i) - \left\{\frac{I(A_i = 0)}{\pi(0, \mathbf{X}_i, \boldsymbol{\beta})} - 1 \right\} \mathbf{B}(0, \mathbf{X}_i)  \right] = \mathbf{0}\]</span> at all <span class="math inline">\(k=1, \cdots, K\)</span>, i.e.&nbsp;a system of <span class="math inline">\(qK\)</span> equations.</li>
+</ul>
+<blockquote class="blockquote">
+<p>This option allows for biased estimation of <span class="math inline">\(\hat{\theta}_k\)</span> with the only aim to estimate the contrast <span class="math inline">\(\theta_k - \theta_0\)</span> without bias. If <span class="math inline">\(\hat{\theta}_k\)</span> is indeed biased, then <span class="math inline">\(\hat{\theta}_k - \hat{\theta}_0\)</span> will not be efficient.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Well, sounds like not a good choice?</p>
+</blockquote>
+<ul>
+<li>Option 2: <span class="math display">\[\sum_{i=1}^n \left\{\frac{I(A_i = k)}{\pi(k, \mathbf{X}_i, \boldsymbol{\beta})} - 1 \right\} \mathbf{B}(k, \mathbf{X}_i) = \mathbf{0}
+\]</span> at all <span class="math inline">\(k=0, \cdots, K\)</span>, i.e., a system of <span class="math inline">\(q(K+1)\)</span> equations.</li>
+</ul>
+<blockquote class="blockquote">
+<p>The asymptotic properties are built upont the estimator whose <span class="math inline">\(\hat{\boldsymbol{\beta}}\)</span> is yielded from this set of equations.</p>
+</blockquote>
+<p>Asymptotic properties…</p>
+</section>
+</section>
+<section id="method-part-2-continuous-treatments" class="level2">
+<h2 class="anchored" data-anchor-id="method-part-2-continuous-treatments">Method part 2: Continuous treatments</h2>
+<section id="balancing-scores-and-preliminaries-on-estimation-1" class="level3">
+<h3 class="anchored" data-anchor-id="balancing-scores-and-preliminaries-on-estimation-1">Balancing scores and preliminaries on estimation</h3>
+<ul>
+<li>treatment <span class="math inline">\(A\)</span>, taking values <span class="math inline">\(a\)</span> in <span class="math inline">\([0, 1]\)</span>.</li>
+<li>potential outcome <span class="math inline">\(Y(a)\)</span>, and assume that <span class="math inline">\(Y(a)\)</span> changes with <span class="math inline">\(a\)</span> smoothly.<br>
+</li>
+<li><span class="math inline">\((A_i, Y_i, \mathbf{X}_i), \, i = 1, \cdots, n\)</span></li>
+</ul>
+<p>Assumptions: - <span class="math inline">\(\mathbb{E}[Y_i(a)|\mathbf{X}_i, A_i] = \mathbb{E}[Y_i(a)|\mathbf{X}_i]\)</span>;<br>
+- <span class="math inline">\(\pi_0(a, \mathbf{x}) \equiv f_{A|\mathbf{X}}(a, \mathbf{x}) &gt; \delta &gt; 0\)</span> for all <span class="math inline">\(a\in[0,1]\)</span> and all <span class="math inline">\(\mathbf{x}\)</span>.</p>
+<ul>
+<li><span class="math inline">\(m(a, \mathbf{x}) \equiv \mathbb{E}[Y_i(a)|\mathbf{X}_i = \mathbf{x}]\)</span>.</li>
+</ul>
+<p>Estimand of interest:<br>
+- treatment-response function or dose-response function: <span class="math inline">\(\theta(a) = \mathbb{E}[Y_i(a)]\)</span>, for <span class="math inline">\(a \in [0, 1]\)</span>.<br>
+- treatment effect: the contrast, <span class="math inline">\(\theta(a) - \theta(b)\)</span>.</p>
+<p>If the model is correctly specified, then<br>
+- there exists a (true) value <span class="math inline">\(\boldsymbol{\beta}_0\)</span> so that <span class="math display">\[
+\pi(a, \mathbf{x}, \boldsymbol{\beta}_0) = \pi_0(a, \mathbf{x}),
+\]</span> - and there exists <span class="math inline">\(\boldsymbol{\alpha}\)</span> such that <span class="math display">\[
+\boldsymbol{\alpha}^T \mathbf{B}(a, \mathbf{x}) = m(a, \mathbf{x})
+\]</span> for all <span class="math inline">\(a\in [0,1]\)</span> and all <span class="math inline">\(\mathbf{x}\)</span>.</p>
+<p>Following the same considerations, there are two different balancing conditions:</p>
+<ul>
+<li><p>Option 1: <span class="math display">\[
+\sum_{i=1}^n \left[\left\{ \frac{K_l(A_i - a)}{\pi(a, \mathbf{X}_i, \boldsymbol{\beta})}-1 \right\} \mathbf{B}(a, \mathbf{X}_i) - \left\{ \frac{K_l(A_i - b)}{\pi(b, \mathbf{X}_i, \boldsymbol{\beta})}-1 \right\} \mathbf{B}(b, \mathbf{X}_i) \right] = \mathbf{0}
+\]</span> for two arbitrary <span class="math inline">\(a, b\)</span> values in <span class="math inline">\([0,1]\)</span>.</p></li>
+<li><p>Option 2: <span class="math display">\[
+\sum_{i=1}^n \left\{ \frac{K_l(A_i - a)}{\pi(a, \mathbf{X}_i, \boldsymbol{\beta})} - 1 \right\} \mathbf{B}(a, \mathbf{X}_i) = \mathbf{0}.
+\]</span> at all <span class="math inline">\(a \in [0,1]\)</span>.</p></li>
+</ul>
+<p>Here, <span class="math inline">\(K_l(\cdot) = l^{-1} K(\cdot/l)\)</span>, where <span class="math inline">\(K(\cdot)\)</span> is a kernel function and <span class="math inline">\(l\)</span> is a bandwidth.</p>
+<p>The inverse propensity weighting estimator <span class="math display">\[
+\hat{\theta}(a) = n^{-1}\sum_{i=1}^n \frac{K_h(A_i - a)Y_i}{\pi(a, \mathbf{X}_i, \hat{\boldsymbol{\beta}})}.
+\]</span> for any <span class="math inline">\(a\)</span> within the range of observed values for <span class="math inline">\(A_i\)</span>. Here, <span class="math inline">\(h\)</span> is a bandwidth.</p>
+<blockquote class="blockquote">
+<p>Where is randomness?</p>
+</blockquote>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
