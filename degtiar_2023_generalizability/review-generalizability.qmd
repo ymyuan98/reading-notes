@@ -51,7 +51,7 @@ Therefore, we distinguish between factors differentiating the target population 
 
 The optimal solution to external validity bias centers on **study design**.
 
--    One ideal design would randomly sample subjects from the target population and then randomly assign treatment to the selected individuals. (INFEASIBLE!).
+-   One ideal design would randomly sample subjects from the target population and then randomly assign treatment to the selected individuals. (INFEASIBLE!).
 
 -   Alternative study designs includes *purposive sampling*, in which investigators deliberately select individuals for reasons such as representative or heterogeneity; *pragmatic or practical clinical trials*, which aim to be representative of clinical practice; *stratified selection* based on effect modifiers or propensity scores for selection; and *balanced sampling designs* for site selection that select representative sites through stratified ranked sampling. (cited..).
 
@@ -92,7 +92,7 @@ $$
 \tau = \mathbb{E}(Y^{(1)} - Y^{(0)}) = 
 \mathbb{E}_{\mathbf{X}}[E(Y|S=1, A=1, \mathbf{X})] - \mathbb{E}_{\mathbf{X}}[E(Y|S=1, A=0, \mathbf{X})]
 $$\
-Its corresponding estimator: \
+Its corresponding estimator:\
 $$
 \hat{\tau} = \frac{1}{n} \sum_{i=1}^n \left(\hat{Y}_i^{(1)} - \hat{Y}_i^{(0)} \right). 
 $$\
