@@ -1,0 +1,13 @@
+---
+title: "Reading note: robust estimation of inverse probaility weights for marginal structural models"
+format: 
+  html:
+    fig-width: 8
+    fig-height: 4
+    code-fold: true
+editor: visual
+---
+
+> [Imai, Kosuke, and Marc Ratkovic. "Robust estimation of inverse probability weights for marginal structural models." Journal of the American Statistical Association 110.511 (2015): 1013-1023.](https://www.tandfonline.com/doi/full/10.1080/01621459.2014.956872?src=recsys)
+
+

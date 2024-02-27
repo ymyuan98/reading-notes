@@ -107,6 +107,11 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="motivation">Motivation</h2>
 <p>Foundation work:<br>
 &gt; <a href="https://www.tandfonline.com/doi/full/10.1080/07350015.2021.2002159">Fan, Jianqing, et al.&nbsp;“Optimal covariate balancing conditions in propensity score estimation.” Journal of Business &amp; Economic Statistics 41.1 (2022): 97-110.</a></p>
+<ul>
+<li><em>Covariate Balancing Propensity Score (CBPS)</em> method for binary treatment.<br>
+</li>
+<li>Estimate covariates using generalized method of moments (GMM).</li>
+</ul>
 </section>
 <section id="methods-part-1-categorical-treatments" class="level2">
 <h2 class="anchored" data-anchor-id="methods-part-1-categorical-treatments">Methods part 1: categorical treatments</h2>
@@ -191,7 +196,8 @@ window.Quarto = {
 \hat{\theta}(a) = n^{-1}\sum_{i=1}^n \frac{K_h(A_i - a)Y_i}{\pi(a, \mathbf{X}_i, \hat{\boldsymbol{\beta}})}.
 \]</span> for any <span class="math inline">\(a\)</span> within the range of observed values for <span class="math inline">\(A_i\)</span>. Here, <span class="math inline">\(h\)</span> is a bandwidth.</p>
 <blockquote class="blockquote">
-<p>Where is randomness?</p>
+<p>Where is randomness? Randomness is implied in the potential outcome <span class="math inline">\(Y(a)\)</span>, which is a random function of dose value <span class="math inline">\(a\)</span>.<br>
+And here comes the functional data analysis!!</p>
 </blockquote>
 </section>
 </section>
