@@ -11,3 +11,25 @@ editor: visual
 > [Imai, Kosuke, and Marc Ratkovic. "Robust estimation of inverse probability weights for marginal structural models." Journal of the American Statistical Association 110.511 (2015): 1013-1023.](https://www.tandfonline.com/doi/full/10.1080/01621459.2014.956872?src=recsys)
 
 
+## Abstract
+
+Marginal structural models (MSMs) are becoming increasingly popular as a tool for causal inference from longitudinal data, as they can adjust for time-dependent observed confounders while avoiding the bias due to the direct adjustment for covariates affected by the treatment. 
+
+
+## Keywords
+
+Causal inference; **Covariate balancing propensity score (CBPS)**; Inverse propensity score weighting; Observational studies; Sequential ignoreability; Time-dependent treatments (**longitudinal data**).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
