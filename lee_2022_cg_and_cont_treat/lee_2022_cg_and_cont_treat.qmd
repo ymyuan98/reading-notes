@@ -25,9 +25,8 @@ For the categorical treatment case, the estimator attains the semiparametric eff
 Foundation work:\
 \> [Fan, Jianqing, et al. "Optimal covariate balancing conditions in propensity score estimation." Journal of Business & Economic Statistics 41.1 (2022): 97-110.](https://www.tandfonline.com/doi/full/10.1080/07350015.2021.2002159)
 
-- *Covariate Balancing Propensity Score (CBPS)* method for binary treatment.  
-- Estimate covariates using generalized method of moments (GMM). 
-
+-   *Covariate Balancing Propensity Score (CBPS)* method for binary treatment.\
+-   Estimate covariates using generalized method of moments (GMM).
 
 ## Methods part 1: categorical treatments
 
@@ -38,8 +37,7 @@ Foundation work:\
 -   $\mathbf{X}_i \in \mathbb{R}^d$: pre-treatment covariates.\
 -   $(A_i, Y_i, \mathbf{X}_i), \ i=1, \cdots, n$: random samples.
 
-Assumptions:\
-- $Y_i = Y_i^k$ if $A_i = k$;\
+Assumptions: - $Y_i = Y_i^k$ if $A_i = k$;\
 - $\mathbb{E}[Y_i^k|\mathbf{X}_i, A_i] = \mathbb{E}[Y_i^k|\mathbf{X}_i] \equiv m(k,\mathbf{X}_i)$;\
 - $\operatorname{Pr}(A_i = k|\mathbf{X}_i = \mathbf{x}) \equiv \pi_0(k,\mathbf{x}) > \delta > 0$ for all $k \in \{0, 1, \cdots, K\}$ and all $\mathbf{x}$, where $\pi_0(k, \mathbf{x})$ is named generalized propensity score.
 
@@ -49,7 +47,7 @@ Consider a parametric working model $\pi(k, \mathbf{x}; \boldsymbol{\beta}) = \p
 
 Consider a **vector of basis functions**: $\mathbf{B}(k, \mathbf{X}): \mathbb{R}^{d+1} \rightarrow \mathbb{R}^q$, aiming at spanning $m(k, \mathbf{x})$.
 
-If models are correctly specified, then\
+If models are correctly specified, then \
 - there exists a (true) value $\boldsymbol{\beta}_0$ with $$\pi(k, \mathbf{x}, \boldsymbol{\beta}_0) = \pi_0(k, \mathbf{x}), $$ - and there exists (a matrix of coefficients) $\boldsymbol{\alpha} = (\boldsymbol{\alpha}_0^\top, \cdots, \boldsymbol{\alpha}_K^T)^T$ with $$\boldsymbol{\alpha}_k^T \mathbf{B}(k, \mathbf{x}) = m(k, \mathbf{x}),$$ for all $k$ and $\mathbf{x}$. That is, for all (conditional) expectation of potential outcomes...
 
 The inverse probability weighting estimator for $\theta_k$ is $$
@@ -79,7 +77,8 @@ Asymptotic properties...
 -   potential outcome $Y(a)$, and assume that $Y(a)$ changes with $a$ smoothly.\
 -   $(A_i, Y_i, \mathbf{X}_i), \, i = 1, \cdots, n$
 
-Assumptions: - $\mathbb{E}[Y_i(a)|\mathbf{X}_i, A_i] = \mathbb{E}[Y_i(a)|\mathbf{X}_i]$;\
+Assumptions:\
+- $\mathbb{E}[Y_i(a)|\mathbf{X}_i, A_i] = \mathbb{E}[Y_i(a)|\mathbf{X}_i]$;\
 - $\pi_0(a, \mathbf{x}) \equiv f_{A|\mathbf{X}}(a, \mathbf{x}) > \delta > 0$ for all $a\in[0,1]$ and all $\mathbf{x}$.
 
 -   $m(a, \mathbf{x}) \equiv \mathbb{E}[Y_i(a)|\mathbf{X}_i = \mathbf{x}]$.
@@ -111,13 +110,5 @@ The inverse propensity weighting estimator $$
 \hat{\theta}(a) = n^{-1}\sum_{i=1}^n \frac{K_h(A_i - a)Y_i}{\pi(a, \mathbf{X}_i, \hat{\boldsymbol{\beta}})}.
 $$ for any $a$ within the range of observed values for $A_i$. Here, $h$ is a bandwidth.
 
-> Where is randomness? 
-> Randomness is implied in the potential outcome $Y(a)$, which is a random function of dose value $a$.   
+> Where is randomness? Randomness is implied in the potential outcome $Y(a)$, which is a random function of dose value $a$.\
 > And here comes the functional data analysis!!
-
-
-
-
-
-
-
