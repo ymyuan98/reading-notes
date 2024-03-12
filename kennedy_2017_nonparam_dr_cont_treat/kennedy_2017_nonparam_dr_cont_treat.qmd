@@ -1,0 +1,163 @@
+---
+title: "Reading note: Non-parametric methods for doubly robust estimation of continuous treatment effects"
+format: 
+  html:
+    fig-width: 8
+    fig-height: 4
+    code-fold: true
+editor: visual
+---
+
+> Kennedy, Edward H., et al. "Non-parametric methods for doubly robust estimation of continuous treatment effects." Journal of the Royal Statistical Society Series B: Statistical Methodology 79.4 (2017): 1229-1245.
+
+## Keywords
+
+Causal inference; Dose-response; Efficient influence function; Kernel smoothing; Semiparametric estimation; *Doubly robust*
+
+## 1. Introduction
+
+Two methodological challenges in continuous treatment settings:
+
+-   to allow for flexible estimation of the dose-response curve (e.g. to discover underlying structure without imposing a priori shape restrictions) and
+
+-   to adjust properly for high dimensional confounders.
+
+Most common approach is based on **regression** modelling of outcome \~ covariates + treatment. However, this approach relies on **correct specification of the outcome model**, does not incorporate available information about the treatment mechanism and is sensitive to the curve of dimensionality by inheriting the rate of convergence of the outcome.
+
+**Propensity-score-based approaches** also rely on correct specification of at least a **model for treatment**.
+
+**Semiparametric doubly robust estimators** are less sensitive to the curse of dimensionality and allow for inference; but they **rely on parametric models for the effect curve**, either by explicitly assuming a parametric dose-response curve or else by projecting the true curve onto a parametric working model.
+
+... (Pros and cons of other methods)
+
+This paper proposes a new approach for causal dose-response estimation that is doubly robust without requiring parametric assumptions and which can naturally incorporate general machine learning methods.
+
+A two-stage implementation:
+
+1\) a pseudo-outcome is constructed based on the doubly robust mapping;
+
+2\) the pseudo-outcome is regressed on treatment via off-the-self non-parametric regression and machine learning tools.
+
+## 2. Background
+
+### 2.1 Data and notation
+
+Suppose iid $(\mathbf{Z}_1, \ldots,\mathbf{Z}_n)$, where $\mathbf{Z} = (\mathbf{L}, A, Y)$ has support $\mathcal{Z}=(\mathcal{L}, \mathcal{A}, \mathcal{Y})$.
+
+-   $\mathbf{L}$: a vector of covariates;
+
+-   $A$: a continuous treatment or exposure;
+
+-   $Y$: outcome.
+
+-   $Y^a$: potential outcome.
+
+-   Distribution of $\mathbf{Z}$: $P$ and with $p(\mathbf{z}) = p(y|\mathbf{l}, a)p(a|\mathbf{l})p(\mathbf{l})$ the density of $\mathbf{Z}$;
+
+-   Empirical measure: $\mathbb{P}_n$: where $$
+      \mathbb{P}_n\{f(\mathbf{Z})\} := \int f(\mathbf{z})\text{d}\mathbb{P}_n(\mathbf{z}) \equiv \frac{1}{n} \sum_i f(\mathbf{Z}_i). 
+    $$
+
+-   Mean outcome given covariates and treatment: $\mu(\mathbf{l}, a) = \mathbb{E}[Y|\mathbf{L=l}, A=a]$;
+
+-   Conditional treatment density given covariates (\~ propensity score function (discrete)): $\pi(a|\mathbf{l}) = \partial P(A \leq a|\mathbf{L=l}) / \partial a$;
+
+-   Marginal treatment density: $\omega(a) = \partial P(A\leq a)/ \partial a$;
+
+-   $L_2(P)$ norm: $\|f\|=\{\int f(\mathbf{z})^2 \text{d} P(\mathbf{z})\}^{1/2}$;
+
+-   Uniform norm: $\|f\|_{\mathcal{X}}=\sup_{x\in \mathcal{X}}|f(x)|$.
+
+### 2.2 Identification
+
+Target: **Effect Curve** (dose-response function) ------
+
+$$
+\theta(a) = \mathbb{E}[Y^a]
+$$
+
+-   Assumption 1. Consistency: $A = a$ implies $Y=Y^a$.
+
+-   Assumption 2. Positivity: $\pi(a|\mathbf{l})=\partial P(A≤a|L=l)/\partial a \geq \pi_{\min}>0$.
+
+-   Assumption 3. Ignorability: $\mathbb{E}[Y^a|\mathbf{L}, A] =\mathbb{E}[Y^a|\mathbf{L}]$.
+
+Positivity may be a particularly strong assumption with continuous treatments.
+
+Then,
+
+$$
+\theta(a) = \mathbb{E}[\mu(\mathbf{L}, a)] = \int_\mathcal{L} \mu(\mathbf{l},a) \text{d}P(\mathbf{l}).
+$$
+
+## 3. Main results
+
+### 3.1 Set-up and doubly robust mapping
+
+Goal: find a function $\xi(\mathbf{Z};\pi, \mu)$ of the observed data $\mathbf{Z}$ and nuisance functions $(\pi,\mu)$ such that
+
+$$
+\mathbb{E}\{\xi(\mathbf{Z}; \bar{\pi}, \bar{\mu})|A=a\} = \theta(a)
+$$
+
+if either $\bar{\pi} = \pi$ or $\bar{\mu}=\mu$ (not necessarily both).
+
+Given such mapping, off-the-shelf non-parametric regression and machine learning methods could be used to estimate $\theta(a)$ by regressing $\xi(\mathbf{Z};\hat{\pi},\hat{\mu})$ on treatment $A$, based on estimates $\hat{\pi}$ and $\hat{\mu}$.
+
+This doubly robust mapping is intimately related to semiparametric theory and especially the efficient influence function for a particular parameter.
+
+Specifically, if $\mathbb{E}\{\xi(\mathbf{Z}; \bar{\pi}, \bar{\mu})|A=a\} = \theta(a)$ then if follows that $\mathbb{E}\{\xi(\mathbf{Z}; \bar{\pi},\bar{\mu})\}=\psi$ for $$
+\psi = \int_{\mathcal{A}}\int_{\mathcal{L}} \mu(\mathbf{l},a) \omega(a)\text{d}P(\mathbf{l})\text{d}a.
+$$
+
+It indicates that a natural candidate for the unknown mapping $\xi(\mathbf{Z};\pi, \mu)$ would be a component of the efficient influence function for the parameter $\psi$ ......
+
+...
+
+**Theorem 1**. Under a non-parametric model, the **efficient influence function** for $\psi$ defined above is
+
+$$
+\xi(\mathbf{Z}; \pi, \mu) - \psi + \int_{\mathcal{A}} \left\{\mu(\mathbf{L}, a) - \int_{\mathcal{L}} \mu(\mathbf{l},a) \text{d}P(\mathbf{l})\right\} \omega(a) \text{d}a, 
+$$
+
+where
+
+$$
+\xi(\mathbf{Z}; \pi,\mu)= \frac{Y-\mu(\mathbf{L},A)}{\pi(A|\mathbf{L})} \int_{\mathcal{L}} \pi(A|\mathbf{l})\text{d}P(\mathbf{l}) + \int_{\mathcal{L}} \mu(\mathbf{l},A) \text{d}P(\mathbf{l}).
+$$
+
+Here, $\xi(\mathbf{Z};\pi,\mu)$ satisfies its desired double-robustness property, i.e.$\mathbb{E}\{\xi(\mathbf{Z};\pi,\mu)|A=a\}=\theta(a)$ if either $\bar{\pi}=\pi$ or $\bar{\mu}=\mu$.
+
+The estimate of $\xi(\mathbf{Z};\pi,\mu)$ is
+
+$$
+\hat{\xi}(\mathbf{Z}; \hat{\pi},\hat{\mu})= \frac{Y-\hat{\mu}(\mathbf{L},A)}{\hat{\pi}(A|\mathbf{L})} \int_{\mathcal{L}} \hat{\pi}(A|\mathbf{l})\text{d}\mathbb{P}_n(\mathbf{l}) + \int_{\mathcal{L}} \hat{\mu}(\mathbf{l},A) \text{d}\mathbb{P}_n(\mathbf{l}).
+$$
+
+### 3.2 Approach proposed
+
+*Step 1*: estimate nuisance functions $(\pi,\mu)$ and obtain predicted values.
+
+*Step 2*: construct pseudo-outcome $\hat{\xi}(\mathbf{Z};\hat{\pi},\hat{\mu})$ and regress on treatment variable $A$.
+
+Step 2 can be obtained using kernal smoothing method.
+
+The local linear kernel version of the estimator is
+
+$$
+\hat{\theta}_h(a) = \mathbf{g}_{ha}(a)^T \hat{\beta}_h(a),
+$$
+
+where
+
+$$
+\mathbf{g}_{ha}(t) = (1, (t-a)/h)^T
+$$ and
+
+$$
+\hat{\beta}_h(a) = \arg\min_{\beta \in \mathbb{R}^2} \mathbb{P}_n[K_{ha}(A) \{\hat{\xi}(\mathbf{Z}; \hat{\pi},\hat{\mu}) - \mathbf{g}_{ha}(A)^T \beta\}^2]
+$$
+
+for $K_{ha}(t)= h^{-1}K\{(t-a)/h\}$ with $K$ a standard kernel function (e.g. a symmetric probability density) and $h$ a scalar bandwidth parameter.
+
+......
