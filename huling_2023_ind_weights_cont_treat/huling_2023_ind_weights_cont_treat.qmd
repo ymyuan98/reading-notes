@@ -8,7 +8,79 @@ format:
 editor: visual
 ---
 
-
 > [Huling, Jared D., Noah Greifer, and Guanhua Chen. "Independence weights for causal inference with continuous treatments." Journal of the American Statistical Association just-accepted (2023): 1-25.](https://www.tandfonline.com/doi/abs/10.1080/01621459.2023.2213485)
 
+## Keywords
+
+Observational data; Distance covariance; Confounding; Balancing weights; Electronic Health Records
+
+## Abstract
+
+...
+
+Weighting approaches seek to control for confounding by reweighting samples so that confounders are comparable across different treatment values. Yet, for continuous treatments, weighting methods are highly sensitive to model misspecification.
+
+In this paper, "we" elucidate the key property that makes weights effective in estimating causal quantities involving continuous treatments. We develop a measure that characterizes the degree to which a set of weights induces such independence. Further, we propose a new model-free method for weight estimation by optimizing our measure.
+
+> The main contribution of this paper is that the authors **propose** a new weight, called **distance covariance optimal weights (DCOWs) (or Penalized DCOWs)**, such that by plugging in this set of weights the NW estimator presented below is still a valid estimator of the ADRF.
+>
+> By the way, the NW estimator is an estimator of the average dose-response function. Its mathematical expression is given below.
+>
+> The NW estimator can be augmented as a doubly-robust NW estimator, which is not included in this summary; however, the DR version estimator is provided in the paper.
+
+## 2. Confounding, Weighting and Dependence
+
+In the binary treatment setting, inverse probability weighting (IPW) estimators can be unstable due to extreme weights and susceptible to model misspecification.
+
+A key reason is that IPW estimation via the generalized propensity score (GPS) requires inverse weighting by a conditional density estimate, not just a conditional probability.
+
+GPS weights can fail to perform well if the distribution of the conditional density is misspecified.
+
+### 2.1 Setup, notation, and assumptions
+
+-   Estimand of interest: causal **average dose-response function** (ADRF)
+
+    $$\mu(a) \equiv \mathbb{E}[Y(a)]$$
+
+-   Assumptions...
+
+### 2.2 Ignorability, independence, and the GPS
+
+-   Generalized propensity score: $f_{A|\mathbf{X}}(A|\mathbf{X})$.
+
+-   For continuous treatments, stabilized GPS weights are computed as $f_A(A)/ f_{A|\mathbf{X}}(A|\mathbf{X})$ , which naturally arise in estimating equations for the dose-response function via semiparametric theory [(Kennedy et al. 2017)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5627792/).
+
+-   ...
+
+### 2.3 A general error decomposition for weighted nonparametric estimators of the ADRF
+
+The response can be expressed as $Y_i = \mu(\mathbf{X}_i,A_i)+\epsilon_i$, where $\epsilon_i \equiv Y_i(A_i)-\mu(\mathbf{X}_i,A_i)$.
+
+By construction, $\epsilon_i$ have mean 0 but are not necessarily identically distributed.
+
+Given weights $\mathbf{w}=(w_1, \cdots, w_n)$ and a kernel $K_h(A_i-a_0)= h^{-1} K(\frac{A_i-a_0}{h})$ centered at $A=a_0$ with bandwidth $h>0$, the **weighted Nadaraya-Watson estimator** of the ADRF at $A=a_0$ is
+
+$$
+\hat{\mu}_{NW}^{\mathbf{w}}(a_0)= \frac{\sum_{i=1}^n Y_i w_i K_h(A_i-a_0)}{\sum_{i=1}^{n}K_h(A_i-a_0)}.
+$$
+
+In practice, the estimator above may be unstable, as the weights only appear in the numerator, so the estimated ADRF may lie outside the range of the observed values of the response.
+
+A more stable estimator is the following weighted average of the responses
+
+$$
+\hat{\mu}_{NW}^{\mathbf{w}}= \frac{\sum_{i=1}^n Y_i w_iK_h(A_i-a_0)}{\sum_{i=1}^n w_i K_h(A_i - a_0)}. 
+$$
+
+It is a valid estimator of the ADRF as long as the denominator divided by $\sum_{i=1}^n w_i$ is a consistent estimator of $f_A(a_0)$.
+
+## 3 Measuring and Controlling Weighted Dependence with Energy Statistics
+
+.... Propose a kind of weight: **Distance covariance optimal independence weights**
+
+.....
+
+Very complicated...
+
+Related to energy statistics, empirical characteristic functions, ....
 
