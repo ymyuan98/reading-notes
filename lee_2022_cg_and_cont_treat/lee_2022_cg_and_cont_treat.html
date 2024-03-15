@@ -126,15 +126,20 @@ window.Quarto = {
 </li>
 <li><span class="math inline">\((A_i, Y_i, \mathbf{X}_i), \ i=1, \cdots, n\)</span>: random samples.</li>
 </ul>
-<p>Assumptions:<br>
-- <span class="math inline">\(Y_i = Y_i^k\)</span> if <span class="math inline">\(A_i = k\)</span>;<br>
-- <span class="math inline">\(\mathbb{E}[Y_i^k|\mathbf{X}_i, A_i] = \mathbb{E}[Y_i^k|\mathbf{X}_i] \equiv m(k,\mathbf{X}_i)\)</span>;<br>
-- <span class="math inline">\(\operatorname{Pr}(A_i = k|\mathbf{X}_i = \mathbf{x}) \equiv \pi_0(k,\mathbf{x}) &gt; \delta &gt; 0\)</span> for all <span class="math inline">\(k \in \{0, 1, \cdots, K\}\)</span> and all <span class="math inline">\(\mathbf{x}\)</span>, where <span class="math inline">\(\pi_0(k, \mathbf{x})\)</span> is named generalized propensity score.</p>
+<p>Assumptions:</p>
+<ul>
+<li><p>Consistency: <span class="math inline">\(Y_i = Y_i^k\)</span> if <span class="math inline">\(A_i = k\)</span>;</p></li>
+<li><p>Ignorability: <span class="math inline">\(\mathbb{E}[Y_i^k|\mathbf{X}_i, A_i] = \mathbb{E}[Y_i^k|\mathbf{X}_i] \equiv m(k,\mathbf{X}_i)\)</span>;</p></li>
+<li><p>Positivity: <span class="math inline">\(\operatorname{Pr}(A_i = k|\mathbf{X}_i = \mathbf{x}) \equiv \pi_0(k,\mathbf{x}) &gt; \delta &gt; 0\)</span> for all <span class="math inline">\(k \in \{0, 1, \cdots, K\}\)</span> and all <span class="math inline">\(\mathbf{x}\)</span>, where <span class="math inline">\(\pi_0(k, \mathbf{x})\)</span> is named generalized propensity score.</p></li>
+</ul>
 <p>Let <span class="math inline">\(\theta_k \equiv \mathbb{E}[Y_i^k]\)</span> for <span class="math inline">\(k=0, 1, \cdots, K\)</span>. Estimand of interest: <span class="math inline">\(\theta_k - \theta_0\)</span>, if <span class="math inline">\(k=0\)</span> is a treatment level of reference.</p>
 <p>Consider a parametric working model <span class="math inline">\(\pi(k, \mathbf{x}; \boldsymbol{\beta}) = \pi_0(k, \mathbf{x})\)</span>, with <span class="math inline">\(\boldsymbol{\beta} \in \mathbb{R}^p\)</span>.</p>
 <p>Consider a <strong>vector of basis functions</strong>: <span class="math inline">\(\mathbf{B}(k, \mathbf{X}): \mathbb{R}^{d+1} \rightarrow \mathbb{R}^q\)</span>, aiming at spanning <span class="math inline">\(m(k, \mathbf{x})\)</span>.</p>
-<p>If models are correctly specified, then<br>
-- there exists a (true) value <span class="math inline">\(\boldsymbol{\beta}_0\)</span> with <span class="math display">\[\pi(k, \mathbf{x}, \boldsymbol{\beta}_0) = \pi_0(k, \mathbf{x}), \]</span> - and there exists (a matrix of coefficients) <span class="math inline">\(\boldsymbol{\alpha} = (\boldsymbol{\alpha}_0^\top, \cdots, \boldsymbol{\alpha}_K^T)^T\)</span> with <span class="math display">\[\boldsymbol{\alpha}_k^T \mathbf{B}(k, \mathbf{x}) = m(k, \mathbf{x}),\]</span> for all <span class="math inline">\(k\)</span> and <span class="math inline">\(\mathbf{x}\)</span>. That is, for all (conditional) expectation of potential outcomes…</p>
+<p>If models are correctly specified, then&nbsp;</p>
+<ul>
+<li><p>there exists a (true) value <span class="math inline">\(\boldsymbol{\beta}_0\)</span> with <span class="math display">\[\pi(k, \mathbf{x}, \boldsymbol{\beta}_0) = \pi_0(k, \mathbf{x}), \]</span></p></li>
+<li><p>and there exists (a matrix of coefficients) <span class="math inline">\(\boldsymbol{\alpha} = (\boldsymbol{\alpha}_0^\top, \cdots, \boldsymbol{\alpha}_K^T)^T\)</span> with <span class="math display">\[\boldsymbol{\alpha}_k^T \mathbf{B}(k, \mathbf{x}) = m(k, \mathbf{x}),\]</span> for all <span class="math inline">\(k\)</span> and <span class="math inline">\(\mathbf{x}\)</span>. That is, for all (conditional) expectation of potential outcomes…</p></li>
+</ul>
 <p>The inverse probability weighting estimator for <span class="math inline">\(\theta_k\)</span> is <span class="math display">\[
 \hat{\theta}_k = n^{-1} \sum_{i=1}^n \frac{I(A_i = k)Y_i}{\pi(k, \mathbf{X}_i, \hat{\boldsymbol{\beta}})}.
 \]</span></p>
@@ -168,20 +173,27 @@ window.Quarto = {
 </li>
 <li><span class="math inline">\((A_i, Y_i, \mathbf{X}_i), \, i = 1, \cdots, n\)</span></li>
 </ul>
-<p>Assumptions: - <span class="math inline">\(\mathbb{E}[Y_i(a)|\mathbf{X}_i, A_i] = \mathbb{E}[Y_i(a)|\mathbf{X}_i]\)</span>;<br>
-- <span class="math inline">\(\pi_0(a, \mathbf{x}) \equiv f_{A|\mathbf{X}}(a, \mathbf{x}) &gt; \delta &gt; 0\)</span> for all <span class="math inline">\(a\in[0,1]\)</span> and all <span class="math inline">\(\mathbf{x}\)</span>.</p>
+<p>Assumptions:</p>
 <ul>
-<li><span class="math inline">\(m(a, \mathbf{x}) \equiv \mathbb{E}[Y_i(a)|\mathbf{X}_i = \mathbf{x}]\)</span>.</li>
+<li><p>Consistency: <span class="math inline">\(Y=Y(a)\)</span> if <span class="math inline">\(A=a\)</span>.</p></li>
+<li><p>Ignorability: <span class="math inline">\(\mathbb{E}[Y_i(a)|\mathbf{X}_i, A_i] = \mathbb{E}[Y_i(a)|\mathbf{X}_i]\)</span></p></li>
+<li><p>Positivity: <span class="math inline">\(\pi_0(a, \mathbf{x}) \equiv f_{A|\mathbf{X}}(a, \mathbf{x}) &gt; \delta &gt; 0\)</span> for all <span class="math inline">\(a\in[0,1]\)</span> and all <span class="math inline">\(\mathbf{x}\)</span>.</p></li>
+<li><p>write <span class="math inline">\(m(a, \mathbf{x}) \equiv \mathbb{E}[Y_i(a)|\mathbf{X}_i = \mathbf{x}]\)</span>.</p></li>
 </ul>
-<p>Estimand of interest:<br>
-- treatment-response function or dose-response function: <span class="math inline">\(\theta(a) = \mathbb{E}[Y_i(a)]\)</span>, for <span class="math inline">\(a \in [0, 1]\)</span>.<br>
-- treatment effect: the contrast, <span class="math inline">\(\theta(a) - \theta(b)\)</span>.</p>
-<p>If the model is correctly specified, then<br>
-- there exists a (true) value <span class="math inline">\(\boldsymbol{\beta}_0\)</span> so that <span class="math display">\[
+<p>Estimand of interest:</p>
+<ul>
+<li><p>treatment-response function or dose-response function: <span class="math inline">\(\theta(a) = \mathbb{E}[Y_i(a)]\)</span>, for <span class="math inline">\(a \in [0, 1]\)</span>.</p></li>
+<li><p>treatment effect: the contrast, <span class="math inline">\(\theta(a) - \theta(b)\)</span>.</p></li>
+</ul>
+<p>If the model is correctly specified, then</p>
+<ul>
+<li><p>there exists a (true) value <span class="math inline">\(\boldsymbol{\beta}_0\)</span> so that <span class="math display">\[
 \pi(a, \mathbf{x}, \boldsymbol{\beta}_0) = \pi_0(a, \mathbf{x}),
-\]</span> - and there exists <span class="math inline">\(\boldsymbol{\alpha}\)</span> such that <span class="math display">\[
+\]</span></p></li>
+<li><p>and there exists <span class="math inline">\(\boldsymbol{\alpha}\)</span> such that <span class="math display">\[
 \boldsymbol{\alpha}^T \mathbf{B}(a, \mathbf{x}) = m(a, \mathbf{x})
-\]</span> for all <span class="math inline">\(a\in [0,1]\)</span> and all <span class="math inline">\(\mathbf{x}\)</span>.</p>
+\]</span> for all <span class="math inline">\(a\in [0,1]\)</span> and all <span class="math inline">\(\mathbf{x}\)</span>.</p></li>
+</ul>
 <p>Following the same considerations, there are two different balancing conditions:</p>
 <ul>
 <li><p>Option 1: <span class="math display">\[

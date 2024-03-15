@@ -37,9 +37,13 @@ Foundation work:\
 -   $\mathbf{X}_i \in \mathbb{R}^d$: pre-treatment covariates.\
 -   $(A_i, Y_i, \mathbf{X}_i), \ i=1, \cdots, n$: random samples.
 
-Assumptions: - $Y_i = Y_i^k$ if $A_i = k$;\
-- $\mathbb{E}[Y_i^k|\mathbf{X}_i, A_i] = \mathbb{E}[Y_i^k|\mathbf{X}_i] \equiv m(k,\mathbf{X}_i)$;\
-- $\operatorname{Pr}(A_i = k|\mathbf{X}_i = \mathbf{x}) \equiv \pi_0(k,\mathbf{x}) > \delta > 0$ for all $k \in \{0, 1, \cdots, K\}$ and all $\mathbf{x}$, where $\pi_0(k, \mathbf{x})$ is named generalized propensity score.
+Assumptions:
+
+-   Consistency: $Y_i = Y_i^k$ if $A_i = k$;
+
+-   Ignorability: $\mathbb{E}[Y_i^k|\mathbf{X}_i, A_i] = \mathbb{E}[Y_i^k|\mathbf{X}_i] \equiv m(k,\mathbf{X}_i)$;
+
+-   Positivity: $\operatorname{Pr}(A_i = k|\mathbf{X}_i = \mathbf{x}) \equiv \pi_0(k,\mathbf{x}) > \delta > 0$ for all $k \in \{0, 1, \cdots, K\}$ and all $\mathbf{x}$, where $\pi_0(k, \mathbf{x})$ is named generalized propensity score.
 
 Let $\theta_k \equiv \mathbb{E}[Y_i^k]$ for $k=0, 1, \cdots, K$. Estimand of interest: $\theta_k - \theta_0$, if $k=0$ is a treatment level of reference.
 
@@ -47,8 +51,11 @@ Consider a parametric working model $\pi(k, \mathbf{x}; \boldsymbol{\beta}) = \p
 
 Consider a **vector of basis functions**: $\mathbf{B}(k, \mathbf{X}): \mathbb{R}^{d+1} \rightarrow \mathbb{R}^q$, aiming at spanning $m(k, \mathbf{x})$.
 
-If models are correctly specified, then \
-- there exists a (true) value $\boldsymbol{\beta}_0$ with $$\pi(k, \mathbf{x}, \boldsymbol{\beta}_0) = \pi_0(k, \mathbf{x}), $$ - and there exists (a matrix of coefficients) $\boldsymbol{\alpha} = (\boldsymbol{\alpha}_0^\top, \cdots, \boldsymbol{\alpha}_K^T)^T$ with $$\boldsymbol{\alpha}_k^T \mathbf{B}(k, \mathbf{x}) = m(k, \mathbf{x}),$$ for all $k$ and $\mathbf{x}$. That is, for all (conditional) expectation of potential outcomes...
+If models are correctly specified, then 
+
+-    there exists a (true) value $\boldsymbol{\beta}_0$ with $$\pi(k, \mathbf{x}, \boldsymbol{\beta}_0) = \pi_0(k, \mathbf{x}), $$
+
+-   and there exists (a matrix of coefficients) $\boldsymbol{\alpha} = (\boldsymbol{\alpha}_0^\top, \cdots, \boldsymbol{\alpha}_K^T)^T$ with $$\boldsymbol{\alpha}_k^T \mathbf{B}(k, \mathbf{x}) = m(k, \mathbf{x}),$$ for all $k$ and $\mathbf{x}$. That is, for all (conditional) expectation of potential outcomes...
 
 The inverse probability weighting estimator for $\theta_k$ is $$
 \hat{\theta}_k = n^{-1} \sum_{i=1}^n \frac{I(A_i = k)Y_i}{\pi(k, \mathbf{X}_i, \hat{\boldsymbol{\beta}})}.
@@ -77,22 +84,31 @@ Asymptotic properties...
 -   potential outcome $Y(a)$, and assume that $Y(a)$ changes with $a$ smoothly.\
 -   $(A_i, Y_i, \mathbf{X}_i), \, i = 1, \cdots, n$
 
-Assumptions:\
-- $\mathbb{E}[Y_i(a)|\mathbf{X}_i, A_i] = \mathbb{E}[Y_i(a)|\mathbf{X}_i]$;\
-- $\pi_0(a, \mathbf{x}) \equiv f_{A|\mathbf{X}}(a, \mathbf{x}) > \delta > 0$ for all $a\in[0,1]$ and all $\mathbf{x}$.
+Assumptions:
 
--   $m(a, \mathbf{x}) \equiv \mathbb{E}[Y_i(a)|\mathbf{X}_i = \mathbf{x}]$.
+-   Consistency: $Y=Y(a)$ if $A=a$.
 
-Estimand of interest:\
-- treatment-response function or dose-response function: $\theta(a) = \mathbb{E}[Y_i(a)]$, for $a \in [0, 1]$.\
-- treatment effect: the contrast, $\theta(a) - \theta(b)$.
+-   Ignorability: $\mathbb{E}[Y_i(a)|\mathbf{X}_i, A_i] = \mathbb{E}[Y_i(a)|\mathbf{X}_i]$
 
-If the model is correctly specified, then\
-- there exists a (true) value $\boldsymbol{\beta}_0$ so that $$
-\pi(a, \mathbf{x}, \boldsymbol{\beta}_0) = \pi_0(a, \mathbf{x}), 
-$$ - and there exists $\boldsymbol{\alpha}$ such that $$
-\boldsymbol{\alpha}^T \mathbf{B}(a, \mathbf{x}) = m(a, \mathbf{x})
-$$ for all $a\in [0,1]$ and all $\mathbf{x}$.
+-   Positivity: $\pi_0(a, \mathbf{x}) \equiv f_{A|\mathbf{X}}(a, \mathbf{x}) > \delta > 0$ for all $a\in[0,1]$ and all $\mathbf{x}$.
+
+-   write $m(a, \mathbf{x}) \equiv \mathbb{E}[Y_i(a)|\mathbf{X}_i = \mathbf{x}]$.
+
+Estimand of interest:
+
+-    treatment-response function or dose-response function: $\theta(a) = \mathbb{E}[Y_i(a)]$, for $a \in [0, 1]$.
+
+-    treatment effect: the contrast, $\theta(a) - \theta(b)$.
+
+If the model is correctly specified, then
+
+-   there exists a (true) value $\boldsymbol{\beta}_0$ so that $$
+    \pi(a, \mathbf{x}, \boldsymbol{\beta}_0) = \pi_0(a, \mathbf{x}), 
+    $$
+
+-   and there exists $\boldsymbol{\alpha}$ such that $$
+    \boldsymbol{\alpha}^T \mathbf{B}(a, \mathbf{x}) = m(a, \mathbf{x})
+    $$ for all $a\in [0,1]$ and all $\mathbf{x}$.
 
 Following the same considerations, there are two different balancing conditions:
 
