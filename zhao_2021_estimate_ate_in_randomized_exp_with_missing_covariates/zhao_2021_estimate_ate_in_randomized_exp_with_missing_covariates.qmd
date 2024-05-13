@@ -1,0 +1,26 @@
+---
+title: "Reading note: To adjust or not to adjust? Estimating the average treatment effect in randomized experiments with missing covariates"
+author: "Ming Yuan"
+format: html
+editor: visual
+---
+
+> [Zhao, Anqi, and Peng Ding. "To adjust or not to adjust? Estimating the average treatment effect in randomized experiments with missing covariates." *Journal of the American Statistical Association* 119.545 (2024): 450-460.](https://www.tandfonline.com/doi/full/10.1080/01621459.2022.2123814)
+
+## Keywords
+
+Efficiency; Imputation; Missingness pattern; Randomized controlled trial; Regression adjustment; Robust standard error
+
+## Abstract
+
+-   The missingness indicators act as fully observed pretreatment covariates as long as missingness is not affected by the treatment, and can thus be used in covariate adjustment to bring additional estimation efficiency.
+
+-   Add the missingness indicators to the regression adjustment.
+
+-   Advantages:
+
+    -   It removes the dependence of the regression-adjusted estimators on the imputed values for the missing covariates.
+
+    -   It improves the estimation efficiency of the complete-covariate analysis and the regression analysis based only on the imputed covariates.
+
+    -   It does not require modeling the missingness mechanism and yields a consistent and efficient estimator even if the missing-data mechanism is related to the missing covariates and unobservable potential outcomes.
