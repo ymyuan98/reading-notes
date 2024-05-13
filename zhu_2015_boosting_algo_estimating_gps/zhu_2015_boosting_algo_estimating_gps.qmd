@@ -1,0 +1,126 @@
+---
+title: "Reading note: A boosting algorithm for estimating generalized propensity scores with continuous treatments"
+author: "Ming Yuan"
+format: 
+  html:
+    fig-width: 8
+    fig-height: 4
+    code-fold: true
+editor: visual
+---
+
+> Zhu, Yeying, Donna L. Coffman, and Debashis Ghosh. "A boosting algorithm for estimating generalized propensity scores with continuous treatments." *Journal of causal inference* 3.1 (2015): 25-40.
+
+## Keywords
+
+Boosting; Distance correlation; Dose-response function; Generalized propensity scores; High dimensional
+
+## Abstract
+
+-   Study the causal inference problem with a continuous treatment variable using propensity score-based methods.
+
+-   The generalized propensity score is defined as the conditional density of the treatment-level given covariates (confounders).
+
+-   When the dimension of the covariates is large, the traditional nonparametric density estimation sufferes from the curse of dimensionality.
+
+-   The authors suggest a boosting algorithm to estimate the mean function of the treatment given covariates.
+
+-   An important tuning parameter is the number of trees to be generated, which essentially determines the trade-off between bias and variance of the causal estimator.
+
+-   The authors propose a criterion called average absolute correlation coefficient (AACC) to determine the optimal number of trees.
+
+    -   In the binary treatment case, the optimal number of trees are suggested to be determined by minimizing the average standardized absolute mean (ASAM) difference between the treatment group and the control group.
+
+    -   The standardized mean difference is also a well-established criterion to assess balance in the potential confounders after weighting.
+
+    -   The idea can easily be extended to the categorical treatment case.
+
+-   Similarly, for a continuous treatment, we could divide the treatment into several categories and draw causal inference based on the categorical treatment.
+
+    -   However, this may introduce subjective bias and information loss.
+    -   Instead, the authors develop an innovative criterion (AACC) that minimizes the correlation between the continuous treatment variable and the covariates after weighting.
+
+## Notations
+
+-   Y: response of interest
+
+-   T: treatment level, and its value $t \in \tau$, where $\tau$ is a continuous domain.
+
+-   $\mathbf{X}$: p-dim vector of baseline covariates
+
+-   $r(t, \mathbf{X}) := f_{T|\mathbf{X}}(t|\mathbf{X})$: generalized propensity score
+
+-   $\mu(t) = \mathbb{E}[Y_i(t)]$: dose-response function (expectation across all individuals $i$.)
+
+**Ignorability Assumption**: $$
+f(t|Y(t), r(t, \mathbf{X})) = f(t|r(t, \mathbf{X})), \ \text{ for } t \in \tau
+$$
+
+## Estimation based on marginal structural models
+
+Focus on the marginal structural model approach to estimate the dose-response function.
+
+Assume a linear model:
+
+$$
+\mathbb{E}[Y(t)] = a_0 + a_1 t.
+$$
+
+-   Marginal model because it does not conditional on any covariates (which is different from regression models).
+
+The IPW for the $i$th subject is
+
+$$
+w_i = \frac{f_T(T_i)}{f_{T|\mathbf{X}}(T_i| \mathbf{X}_i)} = \frac{r(T_i)}{r(T_i, \mathbf{X}_i)}, \ \text{ for } i = 1, \cdots, n.
+$$
+
+Two important issues related to this approach:
+
+1.  the estimation of the IPW (the focus of this paper);
+2.  the functional form of the outcome model in $\mathbb{E}[Y(t)]$.
+    -   The authors use regression spline function for the outcome model:
+
+        $$
+        \mathbb{E}[Y(t)] = \beta_0 + \beta_1 t + \cdots + \beta_pt^p + \beta_{p+1} (t-\tau_1)_+^p + \cdots + \beta_{p+K}(t-\tau_K)_+^p,
+        $$
+
+    -   where $\tau_j$ are inner knots, ...
+
+    -   The models are chosen using weighted AIC or weighted BIC, ...
+
+## The proposed method
+
+### 3.1 Modeling the generalized propensity scores
+
+-   For simplicity, we assume $T$ follows a normal distribution such that $r(T_i)$ can be estimated by normal density.
+
+-   If normality assumption does not hold for $T$, we can employ a nonparametric method, e.g. kernel density estimation, to estimate $r(T_i)$.
+
+To estimate $r(T_i, \mathbf{X}_i)$, a traditional way is to assume $$
+T = \mathbf{X}^\top \beta + \epsilon, \quad \epsilon \sim N(0, \sigma^2). 
+$$
+
+Then, the estimation follows two steps:
+
+1.  Run a multiple regression of $T_i$ on $\mathbf{X}_i, \ i=1, \cdots, n$ and get $\hat{T}_i$ and $\hat{\sigma}$;
+
+2.  Calculate the residuals $\hat{\epsilon}_i = T_i - \hat{T}_i$; $r(T_i, \mathbf{X}_i)$ can be approximated by\
+    $$
+      \hat{r}(T_i, \mathbf{X}_i) \approx f(\hat{\epsilon}_i) \approx \frac{1}{\sqrt{2\pi}\hat{\sigma}} \exp \left\{- \frac{\hat{\epsilon}_i^2}{2\hat{\sigma}^2} \right\}.
+    $$
+
+A (more) general approach is to assume
+
+$$
+T = m(\mathbf{X})+\epsilon, \quad \epsilon \sim N(0, \sigma^2),
+$$ where $m(\mathbf{X})$ is the mean function of $T$ given $\mathbf{X}$.
+
+-   apply the **boosting** algorithm to estimate $m(\mathbf{X})$.
+
+-   nonparametric, automatically pick important covariates, nonlinear terms and interaction terms among covariates.
+
+-   It fits an additive model and each component (base learner) is a regression tree $$
+        m(\mathbf{X}) = \sum_{m=1}^M \sum_{j=1}^{K_m} c_{mj} I \{\mathbf{X} \in R_{mj} \}, 
+    $$ where $M$ is the total number of trees, $K_m$ is the number of terminal nodes for the $m$th tree, $R_{mj}$ is the indicator of rectangular region in the feature space spanned by $\mathbf{X}$ and $c_{mj}$ is the predicted constant in region $R_{mj}$.
+
+.............
