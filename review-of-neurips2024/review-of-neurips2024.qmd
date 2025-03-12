@@ -1,0 +1,401 @@
+---
+title: "A review of interesting (?) papers accepted by NeurIPS 2024"
+format: html
+editor:visual
+---
+
+## 1. Optimization-based Causal Estimation from Heterogeneous Environments
+
+> [Yin, Mingzhang, Yixin Wang, and David M. Blei. "Optimization-based causal estimation from heterogeneous environments." J. Mach. Learn. Res 25 (2024): 1-44.](https://www.jmlr.org/papers/volume25/21-1028/21-1028.pdf) https://nips.cc/virtual/2024/poster/98313
+
+### Abstract
+
+This paper presents a new optimization approach to causal estimation. Given data that contains covariates and an outcome, which covariates are causes of the outcome, and what is the strength of the causality? In classical machine learning (ML), the goal of optimization is to maximize predictive accuracy. However, some covariates might exhibit a non-causal association with the outcome. Such spurious associations provide predictive power for classical ML, but they prevent us from causally interpreting the result. This paper proposes CoCo, an optimization algorithm that bridges the gap between pure prediction and causal inference. CoCo leverages the recently-proposed idea of environments (Peters et al., 2016; Arjovsky et al., 2019), datasets of covariates/response where the causal relationships remain invariant but where the distribution of the covariates changes from environment to environment. Given datasets from multiple environments—and ones that exhibit sufficient heterogeneity—CoCo maximizes an objective for which the only solution is the causal solution. We describe the theoretical foundations of this approach and demonstrate its effectiveness on simulated and real datasets. Compared to classical ML and existing methods, CoCo provides more accurate estimates of the causal model and more accurate predictions under interventions.
+
+**Keywords**: Causal estimation, Robust prediction, Constrained optimization, Directional derivative, Interventional data
+
+### Bulletin points
+
+-   Heterogeneous environment: Multiple environment
+
+-   Causal variables are shared in multiple environments. *No assumptions for environment-specific causes*.
+
+-   $S$: the index set of (shared) causes; $e$: an environment.
+
+-   Spurious association is an endogeneity problem: $x^e_{\backslash S} \not\!\perp\!\!\!\perp \epsilon^e$;
+
+    -   Possible reasons:
+
+        1.  Unobserved confounding $y \leftarrow \epsilon \rightarrow x_{\backslash S}$
+        2.  Observing descendents $y \rightarrow x_{\backslash S}$
+        3.  Observing colliders $y \rightarrow x_1 \leftarrow x_2$, $x_1,x_2 \in x_{\backslash S}$
+
+    -   *Potential environment-specific causes are assumed as spurious associated variable under these assumptions.*
+
+-   Key assumptions:
+
+    -   Exogeneity of causes: $x^e_{S} \!\perp\!\!\!\perp \epsilon^e$, weaker than the standard assumption $x^e \!\perp\!\!\!\perp \epsilon^e$;
+
+    -   Invariance across environments: $\mathbb{E}[y^e|\operatorname{Pa}(y^e)=c] = \mathbb{E}[y^{e'}|\operatorname{Pa}(y^{e'})=c]$, for all $e, e' \in \mathcal{E}$, while $p^e(x)$ changes. *\[Is this a strict assumption?\]*
+
+-   Methods:
+
+[![Slide 6](yin2024optimization-slide6.png)](https://nips.cc/virtual/2024/poster/98313)
+
+where $R(\boldsymbol{\alpha}) = \mathbb{E}\left[\frac{1}{2} (\hat{y}(\boldsymbol{x};\boldsymbol{\alpha}) - y)^2\right]$ is the squared risk function.
+
+[![Slide 7](yin2024optimization-slide7.png)](https://nips.cc/virtual/2024/poster/98313)
+
+[![Slide 8](yin2024optimization-slide8.png)](https://nips.cc/virtual/2024/poster/98313)
+
+-   Perform simulations of causal estimation on the following situations:
+
+[![Slide 14](yin2024optimization-slide14)](https://nips.cc/virtual/2024/poster/98313)
+
+-   Takeaways:
+
+    -   This method can be easily extended to nonlinear relationships; and can potentially applied to any differentiable model at large scale.
+
+    -   Causal optimization by double gradient enables accurate causal estimation and robust prediction when there is spurious association.
+
+    -   Multiple enviroments and the invariance assumption help identify the causal model.
+
+    -   Worth considering regularization on the direction of derivatives, beyond the magnitude of parameters.
+
+    -   Representation learning?
+
+### Reflections
+
+-   *It implicitely assumes that there are no environment-specific causes; potential environment-specific causes are assumed as spurious associated variable under these assumptions. Can this assumption be relaxed?*
+
+-   *Shared causes of multiple environments are the intersection of causes of each environment.*
+
+------------------------------------------------------------------------
+
+## 2. Identifying Selections for Unsupervised Subtask Discovery
+
+> [Qiu, Yiwen, Yujia Zheng, and Kun Zhang. "Identifying Selections for Unsupervised Subtask Discovery." arXiv preprint arXiv:2410.21616 (2024).](https://arxiv.org/abs/2410.21616)
+>
+> https://nips.cc/virtual/2024/poster/94080
+
+### Abstract
+
+When solving long-horizon tasks, it is intriguing to decompose the high-level task into subtasks. Decomposing experiences into reusable subtasks can improve data efficiency, accelerate policy generalization, and in general provide promising solutions to multi-task reinforcement learning and imitation learning problems. However, the concept of subtasks is not sufficiently understood and modeled yet, and existing works often overlook the true structure of the data generation process: **subtasks are the results of a selection mechanism on actions, rather than possible underlying confounders or intermediates**. Specifically, we provide a theory to identify, and experiments to verify the existence of selection variables in such data. These selections serve as subgoals that indicate subtasks and guide policy. In light of this idea, we develop a **sequential non-negative matrix factorization (seqNMF) method** to **learn these subgoals and extract meaningful behavior patterns as subtasks**. Our empirical results on a challenging Kitchen environment demonstrate that the learned subtasks effectively enhance the generalization to new tasks in multi-task imitation learning scenarios. The codes are provided at this [link](https://anonymous.4open.science/r/Identifying_Selections_for_Unsupervised_Subtask_Discovery/README.md).
+
+**Keywords**: Imitation learning, Causality, Selection; Reinforcement learning
+
+### Bulletin points
+
+-   This method is proposed for sequential data in the reinforcement learning.
+
+-   Goal: Discover the true structure of the data generation process - what is the role of subtasks ($v_t$) in achieving a task (between a state $s_t$ and an action $a_t$ at the same time $t$)? Possible roles of subtasks are: confounder $c_t$, selection/collider $g_t$, or intermediate $m_t$.
+
+[![](qiu2024identifying-1.png)](https://nips.cc/virtual/2024/poster/94080)
+
+-   The key insight is that the authors proposed **sufficient and necessary** conditions for recognizing subtask as **selection/collider** and the sufficient conditions are developed to the **conditional independence (CI) test**:
+
+    [![](qiu2024identifying-2.png)](https://nips.cc/virtual/2024/poster/94080)
+
+    -   At every time point $t$, the variable (vector) $d_t$ can only play the same role; at a different time point $t'$, $d_{t'}$ could play a different role from $d_t$ (?)
+
+    -   This CI test is some kind of nonparametric hypothesis testing methods(?).
+
+-   The authors proposed **sequential non-negative matrix factorization (Seq-NMF)** to **learn the subtask**.
+
+[![](qiu2024identifying-3.png)](https://nips.cc/virtual/2024/poster/94080)
+
+### Reflections
+
+-   *This method is to identify selection/collider and does not discriminate whether the "subtask" is a confounder or a intermediate (well, yes, because these two are unidentifiable without additional experiment/intervention(?))*.
+
+-   *Same old question: why would the factor yielded from Seq-NMF is a subtask?*
+
+-   *After identifying subtasks as colliders, does it helps to better predict the future state/action?*
+
+-   ...
+
+------------------------------------------------------------------------
+
+## 3. Do Causal Predictors Generalize Better to New Domains?
+
+> [Nastl, Vivian Y., and Moritz Hardt. "Predictors from causal features do not generalize better to new domains." arXiv preprint arXiv:2402.09891 (2024).](https://arxiv.org/abs/2402.09891)
+>
+> https://nips.cc/virtual/2024/poster/94992
+
+### Abstract
+
+We study **how well machine learning models trained on causal features generalize across domains**. We consider 16 prediction tasks on tabular datasets covering applications in health, employment, education, social benefits, and politics. Each dataset comes with multiple domains, allowing us to test how well a model trained in one domain performs in another. For each prediction task, we select features that have a causal influence on the target of prediction. Our goal is to test the hypothesis that models trained on causal features generalize better across domains. Without exception, we find that predictors using all available features, regardless of causality, have better in-domain and out-of-domain accuracy than predictors using causal features. Moreover, even the absolute drop in accuracy from one domain to the other is **no better for causal predictors than for models that use all features.** In addition, we show that **recent causal machine learning methods for domain generalization do not perform better in our evaluation than standard predictors trained on the set of causal features.** Likewise, causal discovery algorithms either fail to run or select causal variables that perform no better than our selection. Extensive robustness checks confirm that our findings are stable under variable misclassification.
+
+### Bulletin points
+
+-   Conventional wisdom: causal models transfer better across domains; causal relationships reflect stable mechanizms invariant to changes in an environment.
+
+-   The authors questioned whether the conventional wisdom is true.
+
+-   They classified causally-related features into 3 categories:
+
+    -   causal features: features that we strongly believe are causally related to the outcome;
+
+    -   arguably causal features: features that some studies claimed they were causal while some other studies did not;
+
+    -   anti-causal features: features that the outcome causes.
+
+-   The empirical results: **predictors using all available features**, regardless of causality, have **better** in-domain and out-of-domain accuracy **than predictors using just causal features**.
+
+### Reflection
+
+-   *The paper does not show that they adjusted the confounding biases, neither in the in-domain or out-of-domain tasks.*
+
+    -   A question: are confounders considered as causal variables? If yes, then... what is the reason?
+
+-   *Therefore, their results might be simply recognized as studying the outcome based on associations between features and the outcome: the predictive accuracy when using more features is at least no worse than that when using less features.*
+
+...
+
+------------------------------------------------------------------------
+
+## 4. On Causal Discovery in the Presence of Deterministic Relations
+
+> https://github.com/lokali/DGES.git
+>
+> https://nips.cc/virtual/2024/poster/93539
+
+### Abstract
+
+Many causal discovery methods typically rely on the assumption of independent noise, yet real-life situations often involve **deterministic relationships**. In these cases, observed variables are represented as deterministic functions of their parental variables without noise. When determinism is present, constraint-based methods encounter challenges due to the violation of the faithfulness assumption. In this paper, we find, supported by both theoretical analysis and empirical evidence, that **score-based methods with exact search** can naturally address the issues of deterministic relations under rather mild assumptions. Nonetheless, exact score-based methods can be computationally expensive. To enhance the efficiency and scalability, we develop a novel framework for causal discovery that can detect and handle deterministic relations, called Determinism-aware Greedy Equivalent Search (DGES). DGES comprises three phases: (1) identify minimal deterministic clusters (i.e., a minimal set of variables with deterministic relationships), (2) run modified Greedy Equivalent Search (GES) to obtain an initial graph, and (3) perform exact search exclusively on the deterministic cluster and its neighbors. The proposed DGES accommodates both linear and nonlinear causal relationships, as well as both continuous and discrete data types. Furthermore, we investigate the identifiability conditions of DGES. We conducted extensive experiments on both simulated and real-world datasets to show the efficacy of our proposed method. The code is available at <https://github.com/lokali/DGES.git>.
+
+**Keywords**: Causal Discovery, Score-based Method, Deterministic Relation
+
+### Bulletin points
+
+-   Deterministic relationship: (observed) variables are represented as deterministic functions of their parental variables **without noise**.
+
+-   Faithfulness assumption: the data is assumed to be faithful if we assume that a causal graph reflects all probabilistic independencies in its its d-separation. (<https://medium.com/causality-in-data-science/assumptions-for-causal-discovery-cc194d607a14>)
+
+-   In the presence of deterministic relations, the faithfulness assumption is always violated.
+
+    -   "Take the chain structure $X\rightarrow Y \rightarrow Z$ for example where $Y=f(X)$. In this case, faithfulness is violated due to the conditional independence $Z\perp\!\!\!\perp Y | X$, i.e., when $X$ is given, $Y$ degenerates to a const that is independent to any variables.
+
+-   Constraint-based and score-based methods are two primary categories in causal discovery.
+
+-   Contributions:
+
+    1.  The authors find that the exact score-based methods can be used to address the issues of deterministic relations when mild (?) assumptions are fulfilled.
+    2.  They propose a framework called Determinism-aware Greedy Equivalent Search (DGES), aimed at enhancing the efficiency and scalability to handle deterministic relations.
+    3.  They provide the identifiability conditions of DGES under general functional models.
+
+-   Limitations:
+
+    -   In some cases the proposed method cannot identify the skeleton and directions in the DC part.
+
+    -   May be computationally expensive.
+
+-   Impact: learn the causal structures from any general functional causal models in the presence of deterministic relations.
+
+### Reflection
+
+-   The deterministic relation assumption is kind of unusual... Are deterministic cases universal?
+
+-   Can this method be proposed to indeterministic system which consists of random noise?
+
+------------------------------------------------------------------------
+
+## 5. Identifying General Mechanism Shifts in Linear Causal Representations
+
+> [Chen, Tianyu, et al. "Identifying General Mechanism Shifts in Linear Causal Representations." arXiv preprint arXiv:2410.24059 (2024).](https://arxiv.org/abs/2410.24059)
+
+> https://nips.cc/virtual/2024/poster/93955
+
+### Abstract
+
+We consider the linear causal representation learning setting where we observe a linear mixing of d unknown latent factors, which follow a linear structural causal model. Recent work has shown that it is possible to recover the latent factors as well as the underlying structural causal model over them, up to permutation and scaling, provided that we have at least $d$ environments, each of which corresponds to perfect interventions on a single latent node (factor). After this powerful result, a key open problem faced by the community has been to relax these conditions: allow for coarser than perfect single-node interventions, and allow for fewer than $d$ of them, since the number of latent factors $d$ could be very large. In this work, we consider precisely such a setting, where we allow a smaller than $d$ number of environments, and also allow for very coarse interventions that can very coarsely change the entire causal graph over the latent factors. On the flip side, we relax what we wish to extract to simply the list of nodes that have shifted between one or more environments. We provide a surprising identifiability result that it is indeed possible, under some very mild standard assumptions, to identify the set of shifted nodes. Our identifiability proof moreover is a constructive one: we explicitly provide necessary and sufficient conditions for a node to be a shifted node, and show that we can check these conditions given observed data. Our algorithm lends itself very naturally to the sample setting where instead of just interventional distributions, we are provided datasets of samples from each of these distributions. We corroborate our results on both synthetic experiments as well as an interesting psychometric dataset. The code can be found at <https://github.com/TianyuCodings/iLCS>.
+
+**Keywords**: Causal Representations, Mechanism Shift, Linear
+
+### Bulletin points
+
+-   Causal mechanism shift: a change in the way a variable is influenced by its causal parents or the underlying processes that govern the relationships among variables.
+
+-   Contributions:
+
+    -   Show that it is possible to identify the latent sources of distribution shifts in multiple datasets while bypassing the estimation of the mixing function $G$ and the SCM $B$ over the latent variables, under very general types of interventions.
+
+    1.  Identifiability: the authors show that they can identify the shifted latent factors under more general types of interventions.
+    2.  Algorithm: they provide an scalable algorithm that implements the identifiability result to infer such shifted latent factors even in the practical scenarios where we are not given the entire coarse interventional distributions but merely finite samples from each.
+    3.  Experiments: They corroborate their results on both synthetic experiments as well as a psychometric dataset.
+
+-   ...
+
+------------------------------------------------------------------------
+
+## 6. Detecting and Measuring Confounding Using Causal Mechanism Shift
+
+> https://nips.cc/virtual/2024/poster/95068
+
+### Abstract
+
+Detecting and measuring confounding effects from data is a key challenge in causal inference. Existing methods frequently assume causal sufficiency, disregarding the presence of unobserved confounding variables. Causal sufficiency is both unrealistic and empirically untestable. Additionally, existing methods make strong parametric assumptions about the underlying causal generative process to guarantee the identifiability of confounding variables. Relaxing the causal sufficiency and parametric assumptions and leveraging recent advancements in causal discovery and confounding analysis with non-i.i.d. data, we propose a comprehensive approach for detecting and measuring confounding. We consider various definitions of confounding and introduce tailored methodologies to achieve three objectives: (i) detecting and measuring confounding among a set of variables, (ii) separating observed and unobserved confounding effects, and (iii) understanding the relative strengths of confounding bias between different sets of variables. We present useful properties of a confounding measure and present measures that satisfy those properties. Our empirical results support the usefulness of the proposed measures.
+
+**Keywords**: Confounding, Detect, Measure, Causal Mechanism Shifts; **Causal Discovery**
+
+### Bulletin points
+
+-   Focus on:
+
+    \(i\) detecting and measuring confounding among a set of variables;
+
+    \(ii\) assessing the relative strengths of confounding among different sets of observed variables;
+
+    \(iii\) distinguishing between observed and unobserved confounding among a set of variables.
+
+-   The authors leverage the measured confounding to assess the relative strengths of confounding between sets of variables.
+
+-   Contributions:
+
+    -   For various definitions of confounding, the authors propose corresponding measures of confounding and present useful properties of the proposed measures;
+
+    -   The authors study pair-wise confounding, confounding among multiple variables, how to separate unobserved confounding from overall confounding, and present ways to assess relative confounding;
+
+    -   The authors present an algorithm for detecting and measuring confounding using data from multiple contexts.
+
+-   Causal mechanism shift: a change in the way a variable is influenced by its causal parents or the underlying processes that govern the relationships among variables.
+
+-   ...
+
+------------------------------------------------------------------------
+
+## 7. A Closer Look at AUROC and AUPRC Under Class Imbalance
+
+> [McDermott, Matthew, et al. "A closer look at auroc and auprc under class imbalance." arXiv preprint arXiv:2401.06091 (2024).](https://arxiv.org/abs/2401.06091)
+>
+> https://nips.cc/virtual/2024/poster/95133
+
+### Abstract
+
+In machine learning (ML), a widespread claim is that the area under the precision-recall curve (AUPRC) is a superior metric for model comparison to the area under the receiver operating characteristic (AUROC) for tasks with class imbalance. This paper refutes this notion on two fronts. First, we theoretically characterize the behavior of AUROC and AUPRC in the presence of model mistakes, establishing clearly that **AUPRC is not generally superior in cases of class imbalance**. We further show that **AUPRC can be a harmful metric as it can unduly favor model improvements in subpopulations with more frequent positive labels, heightening algorithmic disparities**. Next, we empirically support our theory using experiments on both semi-synthetic and real-world fairness datasets. Prompted by these insights, we reviewed over 1.5 million scientific papers to understand the origin of this invalid claim–finding is often made without citation, misattributed to papers that do not argue this point, and aggressively overgeneralized from source arguments. Our findings represent a dual contribution: a significant technical advancement in understanding the relationship between AUROC and AUPRC and a stark warning about unchecked assumptions in the ML community.
+
+Keywords: AUROC, AUPRC, Class Imbalance
+
+### Bulletin points
+
+-   **Receiving operating characteristic (ROC)** curve: **(y-axis) True Positive Rate (Sensitivity)**, i.e. TP/(TP+FN), **vs (x-axis) False Positive Rate (FPR)**, i.e. FP / (FP + TN).
+
+-   **Precision-Recall Curve (PRC)**: **(y-axis) Precision** **(Positive Predictive Value)**, i.e. TP / (TP + FP), **vs (x-axis) Recall** **(Sensitivity, True Positive Rate)**, i.e. TP / (TP + FN).
+
+[![An example of areas under ROC and PRC](mcdermott2024closer-2.png)](https://nips.cc/media/neurips-2024/Slides/95133.pdf)
+
+[![A 2 by 2 confusion matrix and definition of the corresponding evaluation metrics](confusion-matrix.png)](https://en.wikipedia.org/wiki/Precision_and_recall)
+
+-   Is the AUPRC a better metric under class imbalance?
+
+-   The authors show that the conventional claim that the AUPRC is a better metric under class imbalance is wrong and may be dangerous from a model fairness perspective.
+
+-   AUROC and AUPRC only differ with respect to model-dependent parameters in that **AUROC weighs all false positives equally**, whereas **AUPRC weighs false positives at a threshold** $\tau$ with the inverse of the model's likelihood of outputting any scores greater than $\tau$.
+
+    -   **Theorem 1**: Let $X,Y = 0, 1$ represents a paired feature and binary classification label space from which i.i.d samples $(x, y) \in \mathcal{X} \times \mathcal{Y}$ are drawn via the joint distribution over the random variables $x, y$. Let $f: \mathcal{X} \rightarrow (0,1)$ be a binary classification model outputting continuous probability scores over this space. Then,
+
+        $$
+        \operatorname{AUROC}(f) = 1 - \mathbb{E}_{t \sim f(x)|y=1} [\operatorname{FPR}(f,t)],  
+        $$
+
+        $$
+        \operatorname{AUPRC}(f) = 1 - P_y(y=0) \mathbb{E}_{t \sim f(x)|y=1}\left[ \frac{\operatorname{FPR}(f,t)}{P_x(f(x) > t)} \right].
+        $$
+
+-   AUROC favors model improvements uniformly over all positive samples, whereas AUPRC favors improvements for samples assigned higher scores over those assigned lower scores. **AUPRC prioritizes high-score mistakes, AUROC treats all mistakes equally.**
+
+-   **Definition 2.1** (incorrectly ranked adjacent pair): Let $f, X, Y, x, y$ be defined in Theorem 1. Further, let us suppose we have sampled a static dataset from $x, y$ for evaluation which will be denoted $\mathbf{X,y} = \{(x_1, y_1), \ldots, (x_N, y_N)\}$, for $x_i \in \mathcal{X}, y_i \in \{0,1\}$, and $N \in \mathbb{N}$. We assume for convenience that $f$ is an injective map and all $x_i$ are distinct (i.e., $\forall (i,j): x_i \neq x_j$ which, by injectivity of $f$, implies that $f(x_i) \neq f(x_j)$). We say that $(x_i, x_j)$ are an *incorrectly ranked adjacent pair* and thus that the model makes a "*mistake*" at samples $(x_i, x_j)$ if:
+
+    1.  $y_i=1$ and $y_j=0$;\
+    2.  $f(x_i) < f(x_j)$;\
+    3.  $\nexists x_k$ such that $f(x_i) < f(x_k) < f(x_j)$.
+
+-   This definition of incorrect ranked adjacent pairs is used an example of the following figure.
+
+-   **Theorem 2**: Define $f, X, \mathbf{X, y}$ and $N$ as in Definition 2.1. Further, suppose without loss of generality that the dataset $X$ is ordered such that $f(x_i) < f(x_{i+1})$ for all $i$.
+
+    Let us define $M=\{i| (x_i, x_{i+1})\text{ is an incorrectly ranked adjacent pair of model } f\}$. Define $f'_i$ be a model that is identical to $f$ except that the probabilities assigned to $x_i$ and $x_{i+1}$ are swapped:
+
+    $$
+    f'_i: \left\{ 
+    \begin{array}{ll} 
+    f(x),        & \text{if } x \notin \{x_i, x_{i+1}\} \\
+    f(x_{i+1}),  & \text{if } x = x_i \\
+    f(x_i),      & \text{if } x= x_{i+1}. 
+    \end{array}
+    \right.
+    $$
+
+    (That is, $f'_i$ is an improvement corresponding to incorrectly ranked adjacent pair $(x_i, x_{i+1})$ compared to $f_i$. )
+
+    Then, $\operatorname{AUROC}(f'_i) = \operatorname{AUROC}(f'_j)$ for all $i, j \in M$, and $\operatorname{AUPRC}(f'_i) < \operatorname{AUPRC}(f'_j)$ for all $i, j \in M$ such that $i < j$.
+
+-   **Theorem 3**: AUPRC can unduly prioritize improvements to higher-prevalence subpopulations at the expense of lower prevalence subpopulations, raising serious fairness concerns in any multi-population use cases.
+
+    -   Theorem 3: Let $f, X, \mathbf{X,y}, N, M$ and $f'_j$ all be defined as in Theorem 2. Further, suppose that in this setting the domain $X$ now contains an attribute defining two subgroups, $A=\{0,1\}$, such that for any sample $(x_i, y_i), a_i$ denotes the subgroup to which that sample belongs. Let $f$ be perfectly calibrated for samples in subgroup $a=0$, such that $P_{y|a,x}(y=1, a=0, f(x)=t) = t$. The,
+
+        $$
+        \lim_{P_{y|a}(y=1|a=0) \rightarrow 0} P \left(a_i = a_{i+1}=1| i = \arg\max_{j\in M} (\operatorname{AUPRC}(f'_j)) \right) = 1. 
+        $$
+
+-   Takeaway messages: When should one use AUPRC vs AUROC?
+
+    -   For context-independent model evaluation (Fig 1a), use AUROC;
+
+    -   For deployment scenarios with elevated false negative costs, i.e., scenarios where the consequences of false negatives are especially high, such as in the early screening for critical illnesses like cancer (Fig 1c), use AUROC;
+
+    -   For ethical resource distribution among diverse populations, use AUROC;
+
+    -   For reducing false positives in high-cost, single-group intervention prioritization or information retrieval settings (Fig 1e), use AUPRC.
+
+![](mcdermott2024closer-1.png)
+
+-   Limitations: ...
+
+### Reflection:
+
+-   Interesting!
+
+------------------------------------------------------------------------
+
+## 8. Fast Proxy Experiment Design for Causal Effect Identification
+
+> [Elahi, Sepehr, et al. "Fast Proxy Experiment Design for Causal Effect Identification." arXiv preprint arXiv:2407.05330 (2024).](https://arxiv.org/abs/2407.05330)
+>
+> https://nips.cc/virtual/2024/poster/96127
+
+### Abstract
+
+Identifying causal effects is a key problem of interest across many disciplines. The two long-standing approaches to estimate causal effects are observational and experimental (randomized) studies. Observational studies can suffer from unmeasured confounding, which may render the causal effects unidentifiable. On the other hand, direct experiments on the target variable may be too costly or even infeasible to conduct. A middle ground between these two approaches is to estimate the causal effect of interest through proxy experiments, which are conducted on variables with a lower cost to intervene on compared to the main target. In an earlier work, we studied this setting and demonstrated that the problem of designing the optimal (minimum-cost) experiment for causal effect identification is NP-complete and provided a naive algorithm that may require solving exponentially many NPhard problems as a sub-routine in the worst case. In this work, we provide a few reformulations of the problem that allow for designing significantly more efficient algorithms to solve it as witnessed by our extensive simulations. Additionally, we study the closely-related problem of designing experiments that enable us to identify a given effect through valid adjustments sets.
+
+### Bulletin Points
+
+-   
+
+### Reflection
+
+-   
+
+------------------------------------------------------------------------
+
+## 9. What Type of Inference is Planning?
+
+> https://nips.cc/virtual/2024/poster/96127
+
+------------------------------------------------------------------------
+
+## 10. Causal vs. Anticausal Merging of Predictors
+
+> https://nips.cc/virtual/2024/poster/93078
+
+------------------------------------------------------------------------
+
+## 11. Benchmarking Counterfactual Image Generation
+
+> [Melistas, Thomas, et al. "Benchmarking counterfactual image generation." arXiv preprint arXiv:2403.20287 (2024).](https://arxiv.org/abs/2403.20287)
+>
+> https://nips.cc/virtual/2024/poster/97876
+
+------------------------------------------------------------------------
+
+## 12. Marginal Causal Flows for Validation and Inference

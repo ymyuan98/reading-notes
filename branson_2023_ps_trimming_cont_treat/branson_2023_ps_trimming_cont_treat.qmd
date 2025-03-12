@@ -1,0 +1,62 @@
+---
+title: "Reading note: Causal effect estimation after propensity score trimming with continuous treatments"
+author: "Ming Yuan"
+format: 
+  html:
+    fig-width: 8
+    fig-height: 4
+    code-fold: true
+editor: visual
+---
+
+> [Branson, Zach, et al. "Causal effect estimation after propensity score trimming with continuous treatments." arXiv preprint arXiv:2309.00706 (2023).](https://arxiv.org/pdf/2309.00706.pdf)
+
+## Abstract
+
+-   Causal treatment effect of continuous treatment.
+
+-   Efficient influence functions (EIFs) for causal dose-response curves after propensity score trimming.
+
+-   Trimming involves estimating causal effects among subjects with propensity scores above a threshold, which addresses positivity violations that complicate estimation.
+
+-   Challenges arises with continuous treatments:
+
+    -   EIFs for trimmed dose-response curves do not exist, due to a lack of pathwise differentiability induced by trimming and a continuous treatment.
+
+    -   If the trimming threshold is not prespecified and is instead a parameter that must be estimated, then estimation uncertainty in the threshold must be accounted for.
+
+-   To address these challenges, the authors target a smoothed version of the trimmed dose-response curve for which an EIF exists.
+
+-   They allow the trimming threshold to be a user-specified quantile of the propensity score distribution, and they construct confidence intervals which reflect uncertainty involved in threshold estimation.
+
+## Setup and Causal Estimand
+
+### Notation
+
+-   Sample averages: $\mathbb{P}_n\{f(Z)\} = n^{-1} \sum_{i=1}^n f(Z_i)$   
+
+-   Sample variances: $\operatorname{Var}_n\{f(Z)\} = (n-1)^{-1} \sum_{i=1}^n [f(Z_i) - \mathbb{P}_n\{f(Z)\}]^2$ 
+
+-   $L_2$-norm: $\|f\|^2 = \int f(z)^2 dP(z)$. 
+
+-   Causal dose-response curve: $\psi(a) \equiv \mathbb{E}[Y(a)]$. 
+
+### Causality assumptions 
+
+1.  No unmeasured confounding: $Y(A) \perp\!\!\perp A|X$, for all $a$.  
+
+2.  Consistency: If $A=a$, then $Y = Y(a)$, for all $a$.
+
+3.  Positivity: There is an $c>0$ such that $c \leq \pi(a|x)$ for all $a$ and $x$, 
+where $\pi(a|x)$ is the conditional density of treatment $a$ (the propensity score). 
+
+Under the three assumptions, we have the following identification results: 
+$$
+\psi(a) = \int \mu(x,a) dP(x),
+$$
+where $\mu(x,a) = \mathbb{E}[Y|X=x, A=a]$.  
+
+Given a smooth, symmetric kernel $K_h(\cdot)$ with bandwidth $h$, we can define and identify a kernel-smoothed version of $\psi(a)$: 
+$$
+\psi_h(a) = \int \int K_h(a_0 - a) \mu(x, a_0) da_0 dP(x). 
+$$
