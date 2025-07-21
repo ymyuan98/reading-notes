@@ -33,30 +33,26 @@ editor: visual
 
 ### Notation
 
--   Sample averages: $\mathbb{P}_n\{f(Z)\} = n^{-1} \sum_{i=1}^n f(Z_i)$   
+-   Sample averages: $\mathbb{P}_n\{f(Z)\} = n^{-1} \sum_{i=1}^n f(Z_i)$
 
--   Sample variances: $\operatorname{Var}_n\{f(Z)\} = (n-1)^{-1} \sum_{i=1}^n [f(Z_i) - \mathbb{P}_n\{f(Z)\}]^2$ 
+-   Sample variances: $\operatorname{Var}_n\{f(Z)\} = (n-1)^{-1} \sum_{i=1}^n [f(Z_i) - \mathbb{P}_n\{f(Z)\}]^2$
 
--   $L_2$-norm: $\|f\|^2 = \int f(z)^2 dP(z)$. 
+-   $L_2$-norm: $\|f\|^2 = \int f(z)^2 dP(z)$.
 
--   Causal dose-response curve: $\psi(a) \equiv \mathbb{E}[Y(a)]$. 
+-   Causal dose-response curve: $\psi(a) \equiv \mathbb{E}[Y(a)]$.
 
-### Causality assumptions 
+### Causality assumptions
 
-1.  No unmeasured confounding: $Y(A) \perp\!\!\perp A|X$, for all $a$.  
+1.  No unmeasured confounding: $Y(A) \perp\!\!\perp A|X$, for all $a$.
 
 2.  Consistency: If $A=a$, then $Y = Y(a)$, for all $a$.
 
-3.  Positivity: There is an $c>0$ such that $c \leq \pi(a|x)$ for all $a$ and $x$, 
-where $\pi(a|x)$ is the conditional density of treatment $a$ (the propensity score). 
+3.  Positivity: There is an $c>0$ such that $c \leq \pi(a|x)$ for all $a$ and $x$, where $\pi(a|x)$ is the conditional density of treatment $a$ (the propensity score).
 
-Under the three assumptions, we have the following identification results: 
-$$
+Under the three assumptions, we have the following identification results: $$
 \psi(a) = \int \mu(x,a) dP(x),
-$$
-where $\mu(x,a) = \mathbb{E}[Y|X=x, A=a]$.  
+$$ where $\mu(x,a) = \mathbb{E}[Y|X=x, A=a]$.
 
-Given a smooth, symmetric kernel $K_h(\cdot)$ with bandwidth $h$, we can define and identify a kernel-smoothed version of $\psi(a)$: 
-$$
+Given a smooth, symmetric kernel $K_h(\cdot)$ with bandwidth $h$, we can define and identify a kernel-smoothed version of $\psi(a)$: $$
 \psi_h(a) = \int \int K_h(a_0 - a) \mu(x, a_0) da_0 dP(x). 
 $$
