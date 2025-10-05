@@ -1,6 +1,7 @@
-# Reading Note: Identifying Effects of Multiple Treatments in the Presence of Unmeasured Confounding
 Ming Yuan
 2025-10-04
+
+# Reading Note: Identifying Effects of Multiple Treatments in the Presence of Unmeasured Confounding
 
 > [Miao, W., Hu, W., Ogburn, E. L., & Zhou, X. H. (2022). Identifying
 > Effects of Multiple Treatments in the Presence of Unmeasured
@@ -141,13 +142,19 @@ or on estimating the confounder directly.
     subvector of $x_C$ and $x_{\bar{S}}$ the rest component of $x$
     except for $x_S$. Under Assumptions 1 and 3, for any choice for
     $x_S$, if there exists a function $\tilde{f}(y\mid u x_{\bar{S}})$
-    that solves $$
-      f(y \mid x) = \int_u \tilde{f}(y \mid u, x_{\bar{S}}) \tilde{f}(u \mid x_{S}, x_{\bar{S}})
-      $$ given $\tilde{f}(x,u)$ and $f(y|x)$, and that the solution
-    dependsn on at most $(|C|-q) / 2$ ones of the confounded treatments,
-    then it must solve $$
-      f(y|x) = \int_u \tilde{f}(y \mid u,x) \tilde{f}(u \mid x) du.
-      $$
+    that solves
+
+  $$
+    f(y \mid x) = \int_u \tilde{f}(y \mid u, x_{\bar{S}}) \tilde{f}(u \mid x_{S}, x_{\bar{S}})
+    $$
+
+  given $\tilde{f}(x,u)$ and $f(y|x)$, and that the solution dependsn on
+  at most $(|C|-q) / 2$ ones of the confounded treatments, then it must
+  solve
+
+  $$
+    f(y|x) = \int_u \tilde{f}(y \mid u,x) \tilde{f}(u \mid x) du.
+    $$
 
 - By distinguishing null variable sets, **hypothesis testings** can be
   conducted. Here provides a test of the *sharp null hypothesis* of no
@@ -195,9 +202,7 @@ or on estimating the confounder directly.
 
 - Step 3: essential applications of the g-formula.
 
-``` markdown
 ![Fig.2: the null treatments algorithm](null-treatments-algo.png)
-```
 
 **An Example:**
 
@@ -241,8 +246,10 @@ design matrix and $\hat{\xi}_C$ is observations with outliers
 corresponding to nonzero entries of $\beta_C$. - Given a
 $n^{1/2}$-consistent estimator $(\hat{\xi}, \hat{\gamma})$, we solve $$
   \hat{\delta}^{lms} = \arg \min_{\delta} \operatorname{median}\{(\hat{\xi}_i - \hat{\gamma}_i \delta)^2, \ i \in \hat{\mathcal{C}}\}, \quad \hat{\mathcal{C}} = \{i: \|\hat{\gamma}_i\|_2^2 > \log (n) / n\},
-  $$ which is a least median of squares estimator minimizing median of
-the squared errors $(\hat{\xi}_i - \hat{\gamma}_i \delta)^2$ among the
+  $$
+
+which is a least median of squares estimator minimizing median of the
+squared errors $(\hat{\xi}_i - \hat{\gamma}_i \delta)^2$ among the
 confounded treatments consistently selected by $\hat{C}$. - The
 corresponding estimate of $\beta$ is
 $\hat{\beta}^{lms} = \hat{\xi} - \hat{\gamma} \hat{\delta}^{lms}$.
@@ -254,9 +261,8 @@ $\hat{\beta}^{lms} = \hat{\xi} - \hat{\gamma} \hat{\delta}^{lms}$.
 
 #### Simulation studies.
 
-``` markdown
-![Fig.3: Simulations on the null treatments settings](null-treatments-simulation-settings.png)
-```
+![Fig.3: Simulations on the null treatments
+settings](null-treatments-simulation-settings.png)
 
 - In case 1, the null treatments assumption is satisfied, as only two of
   the confounded treatments are active.
@@ -271,9 +277,8 @@ $\hat{\beta}^{lms} = \hat{\xi} - \hat{\gamma} \hat{\delta}^{lms}$.
     the number of “specified” confounder is smaller than the truth,
   - the OLS.
 
-``` markdown
-![Fig.4: Simulation results of case 1 under the null treatments settings](null-treatments-simulation-results-case1.png)
-```
+![Fig.4: Simulation results of case 1 under the null treatments
+settings](null-treatments-simulation-results-case1.png)
 
 - In case 1:
   - Null1, as the groundtruth method, provides unbiased estimates of all
@@ -286,9 +291,8 @@ $\hat{\beta}^{lms} = \hat{\xi} - \hat{\gamma} \hat{\delta}^{lms}$.
 - In case 2:
   - All biased. See Fig.5.
 
-``` markdown
-![Fig.5: Simulation results of case 2 under the null treatments settings](null-treatments-simulation-results-case2.png)
-```
+![Fig.5: Simulation results of case 2 under the null treatments
+settings](null-treatments-simulation-results-case2.png)
 
 ## Discussion
 

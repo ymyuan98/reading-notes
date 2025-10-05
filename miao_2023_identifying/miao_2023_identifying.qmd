@@ -1,10 +1,11 @@
 ---
-title: "Reading Note: Identifying Effects of Multiple Treatments in the Presence of Unmeasured Confounding"
 author: "Ming Yuan"
 date: "2025-10-04"
 format:
   gfm: default
 ---
+
+# Reading Note: Identifying Effects of Multiple Treatments in the Presence of Unmeasured Confounding
 
 > [Miao, W., Hu, W., Ogburn, E. L., & Zhou, X. H. (2022). Identifying Effects of Multiple Treatments in the Presence of Unmeasured Confounding. Journal of the American Statistical Association, 118(543), 1953–1967. https://doi.org/10.1080/01621459.2021.2023551](https://www.tandfonline.com/doi/full/10.1080/01621459.2021.2023551)
 
@@ -95,10 +96,13 @@ They propose two general strategies to achieve identification and estimation of 
 
 - Intuitively, the null treatments act as a kind of “anchor” or baseline to help disentangle confounding from causal effects. That is, each $X$ can be used as an auxiliary variable. 
     - Proposition 2: Let $x_S$ denote an arbitrary $q$-dimensional subvector of $x_C$ and $x_{\bar{S}}$ the rest component of $x$ except for $x_S$. Under Assumptions 1 and 3, for any choice for $x_S$, if there exists a function $\tilde{f}(y\mid u x_{\bar{S}})$ that solves 
+  
     $$
     f(y \mid x) = \int_u \tilde{f}(y \mid u, x_{\bar{S}}) \tilde{f}(u \mid x_{S}, x_{\bar{S}})
     $$
+
     given $\tilde{f}(x,u)$ and $f(y|x)$, and that the solution dependsn on at most $(|C|-q) / 2$ ones of the confounded treatments, then it must solve 
+
     $$
     f(y|x) = \int_u \tilde{f}(y \mid u,x) \tilde{f}(u \mid x) du.
     $$
@@ -127,9 +131,9 @@ They propose two general strategies to achieve identification and estimation of 
   - Step 2: First, $f(y\mid x)$ can be estimated parametrically or nonparametrically using standard density estimation techniques. Second, solve integral equations $f(y \mid x) = \int_u \tilde{f}(y\mid x,u) \tilde{f}(u \mid x)$, which do not admit analyical solutions in general. However, one may apply numerical method provided in Chae et al. (2019) for a numerical method under mild conditions. 
   - Step 3: essential applications of the g-formula. 
 
-```markdown
+
 ![Fig.2: the null treatments algorithm](null-treatments-algo.png)
-```
+
 
 **An Example:**
 
@@ -167,6 +171,7 @@ Estimation of $\beta$.
   $$
   \hat{\delta}^{lms} = \arg \min_{\delta} \operatorname{median}\{(\hat{\xi}_i - \hat{\gamma}_i \delta)^2, \ i \in \hat{\mathcal{C}}\}, \quad \hat{\mathcal{C}} = \{i: \|\hat{\gamma}_i\|_2^2 > \log (n) / n\},
   $$
+
   which is a least median of squares estimator minimizing median of the squared errors $(\hat{\xi}_i - \hat{\gamma}_i \delta)^2$ among the confounded treatments consistently selected by $\hat{C}$. 
 - The corresponding estimate of $\beta$ is $\hat{\beta}^{lms} = \hat{\xi} - \hat{\gamma} \hat{\delta}^{lms}$. 
 
@@ -174,9 +179,8 @@ Estimation of $\beta$.
 
 #### Simulation studies. 
 
-```markdown
 ![Fig.3: Simulations on the null treatments settings](null-treatments-simulation-settings.png)
-```
+
 
 - In case 1, the null treatments assumption is satisfied, as only two of the confounded treatments are active.
 - In case 2, this assumption is violated. 
@@ -186,9 +190,8 @@ Estimation of $\beta$.
   - the null treatments estimation with one confounder (Null2), i.e., the number of "specified" confounder is smaller than the truth,
   - the OLS. 
 
-```markdown
 ![Fig.4: Simulation results of case 1 under the null treatments settings](null-treatments-simulation-results-case1.png)
-```
+
 
 - In case 1: 
   - Null1, as the groundtruth method, provides unbiased estimates of all coefficients of interests.
@@ -197,9 +200,9 @@ Estimation of $\beta$.
 - In case 2: 
   - All biased. See Fig.5.
 
-```markdown
+
 ![Fig.5: Simulation results of case 2 under the null treatments settings](null-treatments-simulation-results-case2.png)
-```
+
 
 ## Discussion
 
@@ -208,7 +211,7 @@ Estimation of $\beta$.
 - However, statistical inference for nonparametric and semiparametric models remains to be studied. 
 - So far the study considers the low-dimensional settings, $n > p$.
 
- 
+
 
 
 
