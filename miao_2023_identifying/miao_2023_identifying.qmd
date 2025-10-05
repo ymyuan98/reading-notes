@@ -2,8 +2,10 @@
 author: "Ming Yuan"
 date: "2025-10-04"
 format:
-  gfm: default
+    pdf: default
+    gfm: default
 ---
+<!-- #   gfm: default -->
 
 # Reading Note: Identifying Effects of Multiple Treatments in the Presence of Unmeasured Confounding
 
@@ -51,7 +53,8 @@ They propose two general strategies to achieve identification and estimation of 
 
 - When $Y$ is not observed, joint distributions $f(y,x,u)$ cannot be uniquely determined by $f(y,x)$ because... 
 
-- Call $\tilde{f}(y,x,u)$ is admissible if it conforms to the observed data distribution $f(y,x)$, i.e. $f(y,x) = \int_u \tilde{f}(y,x,u) du$. 
+- Call $\tilde{f}(y,x,u)$ is admissible if it conforms to the observed data distribution $f(y,x)$, i.e. 
+  $f(y,x) = \int_u \tilde{f}(y,x,u) du$ . 
 
 
 ### 1. Auxiliary variables approach
@@ -73,9 +76,9 @@ They propose two general strategies to achieve identification and estimation of 
 - An alternative that **does not require knowing which treatments are null (i.e. having no causal effect)**.
 
 - Assumptions:
-  - *Null treatments*: the cardinality of the intersection $\mathcal{C} \cap \mathcal{A}$ does not exceed $(|\mathcal{C}-q|)/2$, where $|\mathcal{C}|$ is the cardinality of the $\mathcal{C}$ must be larger than the dimension of $U$;
+  - *Null treatments*: the cardinality of the intersection $\mathcal{C} \cap \mathcal{A}$ does not exceed $(|\mathcal{C}|-q)/2$, where $|\mathcal{C}|$ is the cardinality of the $\mathcal{C}$ must be larger than the dimension of $U$;
   - *Equivalence*: for any $\alpha$, any $\tilde{f}(x,u)$ that solves $f(x; \alpha) = \int_u \tilde{f}(x,u) du$ can be written as $\tilde{f}(x,u) = f\{X=x, V(U)=u; \alpha\}$ for some invertible but not necessarily known function $V$. 
-  - *Completeness*: for any $\alpha$, $f(u|x;\alpha)$ is complete in any $q$-dimensional subvector $x_S$ of the confounded treatment $x_C$. 
+  - *Completeness*: for any $\alpha$, $f(u\mid x;\alpha)$ is complete in any $q$-dimensional subvector $x_S$ of the confounded treatment $x_C$. 
 
 - The key assumption *(null treatments assumption)* is: at least half of the (possibly confounded) treatments truly have zero causal effect on the outcome, but is it not necessarily to know which treatments are active.
 
@@ -84,7 +87,9 @@ They propose two general strategies to achieve identification and estimation of 
     $$
     f(y|x) = \int_u \tilde{f}(y|u,x) \tilde{f}(u|x) du,
     $$ 
+
     and the potential outcome distribution is identifiable by 
+
     $$
     f\{Y(x) = y\} = \int_u \tilde{f}(y|u,x) \tilde{f}(u) du.
     $$
@@ -95,7 +100,7 @@ They propose two general strategies to achieve identification and estimation of 
   - The completeness assumption guarantees uniqueness of the solution. 
 
 - Intuitively, the null treatments act as a kind of “anchor” or baseline to help disentangle confounding from causal effects. That is, each $X$ can be used as an auxiliary variable. 
-    - Proposition 2: Let $x_S$ denote an arbitrary $q$-dimensional subvector of $x_C$ and $x_{\bar{S}}$ the rest component of $x$ except for $x_S$. Under Assumptions 1 and 3, for any choice for $x_S$, if there exists a function $\tilde{f}(y\mid u x_{\bar{S}})$ that solves 
+    - Proposition 2: Let $x_S$ denote an arbitrary $q$-dimensional subvector of $x_C$ and $x_{\bar{S}}$ the rest component of $x$ except for $x_S$. Under Assumptions 1 and 3, for any choice for $x_S$, if there exists a function $\tilde{f}(y\mid u, x_{\bar{S}})$ that solves 
   
     $$
     f(y \mid x) = \int_u \tilde{f}(y \mid u, x_{\bar{S}}) \tilde{f}(u \mid x_{S}, x_{\bar{S}})
