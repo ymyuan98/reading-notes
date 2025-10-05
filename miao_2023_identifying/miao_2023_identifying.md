@@ -1,5 +1,4 @@
-# Reading Note: Identifying Effects of Multiple Treatments in the
-Presence of Unmeasured Confounding
+# Reading Note: Identifying Effects of Multiple Treatments in the Presence of Unmeasured Confounding
 Ming Yuan
 2025-10-04
 
