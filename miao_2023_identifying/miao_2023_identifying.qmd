@@ -129,7 +129,7 @@ They propose two general strategies to achieve identification and estimation of 
 
 #### Estimation:
   - > "If an issue can be addressed nonparametrically then it will often be better to tackle it parametrically; however, if it cannot be resolved nonparametrically then it is usually dangerous to resolve it parametrically."
-  - See Fig.2 for algorithm under the null treatments setting.
+  - See Fig.1 for algorithm under the null treatments setting.
   - Step 1: requires only the equivalence assumption, which places nontrivial restrictions on the treatment-confounder distribution. 
     - To estimate $\tilde{f}(x,u)$, one needs to correctly specify a treatment-confounder model that meets the equivalence assumption, such as a factor or mixture model. 
     - This step estimates the distribution of $U$ joint with $X$, but does not estimate $U$ itself. 
@@ -137,7 +137,7 @@ They propose two general strategies to achieve identification and estimation of 
   - Step 3: essential applications of the g-formula. 
 
 
-![Fig.2: the null treatments algorithm](null-treatments-algo.png)
+![the null treatments algorithm](null-treatments-algo.png)
 
 
 **An Example:**
@@ -184,7 +184,7 @@ Estimation of $\beta$.
 
 #### Simulation studies. 
 
-![Fig.3: Simulations on the null treatments settings](null-treatments-simulation-settings.png)
+![Simulations on the null treatments settings](null-treatments-simulation-settings.png)
 
 
 - In case 1, the null treatments assumption is satisfied, as only two of the confounded treatments are active.
@@ -195,18 +195,19 @@ Estimation of $\beta$.
   - the null treatments estimation with one confounder (Null2), i.e., the number of "specified" confounder is smaller than the truth,
   - the OLS. 
 
-![Fig.4: Simulation results of case 1 under the null treatments settings](null-treatments-simulation-results-case1.png)
+![Simulation results of case 1 under the null treatments settings](null-treatments-simulation-results-case1.png)
 
 
-- In case 1: 
+- In case 1 (see Fig.2):  
   - Null1, as the groundtruth method, provides unbiased estimates of all coefficients of interests.
   - Null2 with a wrong number of specified confounder, provides unbiased estimate for active but unconfounded treatment $X_1$, but the estimates for the other treatments, either active or inactive, are biased, but the biases are less than those of the OLS. 
   - OLS is always biased.
+  
 - In case 2: 
-  - All biased. See Fig.5.
+  - All biased. See Fig.4.
 
 
-![Fig.5: Simulation results of case 2 under the null treatments settings](null-treatments-simulation-results-case2.png)
+![Simulation results of case 2 under the null treatments settings](null-treatments-simulation-results-case2.png)
 
 
 ## Discussion
