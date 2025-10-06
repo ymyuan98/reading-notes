@@ -103,7 +103,7 @@ They propose two general strategies to achieve identification and estimation of 
     - **Proposition 2**: Let $x_S$ denote an arbitrary $q$-dimensional subvector of $x_C$ and $x_{\bar{S}}$ the rest component of $x$ except for $x_S$. Under Assumptions 1 and 3, for any choice for $x_S$, if there exists a function $\tilde{f}(y\mid u, x_{\bar{S}})$ that solves 
   
     $$
-    f(y \mid x) = \int_u \tilde{f}(y \mid u, x_{\bar{S}}) \tilde{f}(u \mid x_{S}, x_{\bar{S}})
+    f(y \mid x) = \int_u \tilde{f}(y \mid u, x_{\bar{S}}) \tilde{f}(u \mid x_{S}, x_{\bar{S}}) du
     $$
 
     given $\tilde{f}(x,u)$ and $f(y|x)$, and that the solution depends on at most $(|\mathcal{C}|-q) / 2$ ones of the confounded treatments, then it must solve 
