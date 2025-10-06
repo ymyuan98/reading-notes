@@ -100,13 +100,13 @@ They propose two general strategies to achieve identification and estimation of 
   - The completeness assumption guarantees uniqueness of the solution. 
 
 - Intuitively, the null treatments act as a kind of “anchor” or baseline to help disentangle confounding from causal effects. That is, each $X$ can be used as an auxiliary variable. 
-    - Proposition 2: Let $x_S$ denote an arbitrary $q$-dimensional subvector of $x_C$ and $x_{\bar{S}}$ the rest component of $x$ except for $x_S$. Under Assumptions 1 and 3, for any choice for $x_S$, if there exists a function $\tilde{f}(y\mid u, x_{\bar{S}})$ that solves 
+    - **Proposition 2**: Let $x_S$ denote an arbitrary $q$-dimensional subvector of $x_C$ and $x_{\bar{S}}$ the rest component of $x$ except for $x_S$. Under Assumptions 1 and 3, for any choice for $x_S$, if there exists a function $\tilde{f}(y\mid u, x_{\bar{S}})$ that solves 
   
     $$
     f(y \mid x) = \int_u \tilde{f}(y \mid u, x_{\bar{S}}) \tilde{f}(u \mid x_{S}, x_{\bar{S}})
     $$
 
-    given $\tilde{f}(x,u)$ and $f(y|x)$, and that the solution dependsn on at most $(|C|-q) / 2$ ones of the confounded treatments, then it must solve 
+    given $\tilde{f}(x,u)$ and $f(y|x)$, and that the solution depends on at most $(|\mathcal{C}|-q) / 2$ ones of the confounded treatments, then it must solve 
 
     $$
     f(y|x) = \int_u \tilde{f}(y \mid u,x) \tilde{f}(u \mid x) du.
@@ -150,19 +150,22 @@ $$
 \Sigma_U = I_q, \quad \mathbb{E}(U) = 0, \quad U \perp\!\!\perp \epsilon, \quad \Sigma_\epsilon \ \text{diagonal}. 
 $$
 
-Here, $U$ and $\epsilon$ are not necessarily normally distributed. 
+- Here, $U$ and $\epsilon$ are not necessarily normally distributed. 
   - The coefficient $\beta$ encoding the average treatment effects is of interest. 
   - Let $\gamma = \Sigma_X^{-1} \alpha$ denotes the coefficients of regressing $U$ on $X$. 
   - Let $\mathcal{C} = \{i: \alpha_i \ \text{is not a zero vector}\}$ denote the indices of cnofounded treatments, and 
   - $\gamma_C$ the submatrix consisting of the corresponding rows of $\gamma$. 
   - Let $A_i$ denote the $i$-th row of a matrix or a column vector $A$. 
+
 **Theorem 3** can be expressed accordingly: 
+
 - Theorem 3: The parameter $\beta$ is identified under the model above and the following assumptions: 
   - (i) at most $(|\mathcal{C}| - q) / 2$ entries of $\boldsymbol{\beta}_C$ are nonzero;
   - (ii) after deleting any row, there remain two disjoint submatrices of $\alpha$ of full rank;
   - (iii) any submatrix of $\gamma_C$ consisting of $q$ rows has full rank. 
 
-Estimation of $\beta$. 
+Estimation of $\beta$:  
+
 - Denote $\xi$ the coefficients by regressing $Y$ on $X$, i.e., $\mathbb{E}[Y \mid X] =  X \xi$. 
 - Given $n$ iid samples, we first obtain $\hat{\gamma}$ by factor analysis of $X$ (Step 1): 
   - The matrix factorization model: $X \approx U \alpha^\top + \epsilon$, where $U \in \mathbb{R}^{n \times q}$ contains the latent confounder scores per individual, $\alpha \in \mathbb{R}^{p \times q}$ contains the factor loading for each treatment. 
