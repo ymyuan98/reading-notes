@@ -1,0 +1,150 @@
+---
+title: "Book: Applied Causal Inference Powered by ML and AI"
+author: "Note taken by Ming Yuan"
+date: last-modified  
+date-format: yyyy-MM-dd 
+format:
+    pdf: default
+    gfm: default
+editor: visual
+---
+
+# Chapter 1: Predictive Inference with Linear Regression in Moderately High Dimensions
+
+## 1.1 Foundation of linear regression
+
+**Best Linear Predictor (BLP)**:
+
+$$
+\beta = \arg \min_{b \in \mathbb{R}^p} E\left[ (Y-b'X)^2 \right]
+$$
+
+**Normal Equation**: $\beta$ can be computed by solving the first order conditions for the BLP problem:
+
+$$
+E \left[(Y - \beta'X)X \right] = 0.
+$$
+
+### Best Linear Approximation Property
+
+The normal equation implies by the law of iterated expectations that
+
+$$
+E \left[ \left( E[Y \mid X] - \beta' X \right)X \right] = 0.
+$$
+
+Therefore, the BLP of $Y$ is also the BLP for $E[Y \mid X]$.
+
+### From Best Linear Predictor to Best Predictor
+
+If $W$ are "raw" regressors/features, technical (constructed) regressors are of the form
+
+$$
+X = T(W) = (T_1(W), \ldots, T_p(W))',
+$$
+
+where the set of transformation $T(W)$ is sometimes called the *dictionary* of transformations.
+
+In the population, the best predictor of $Y$ given $W$ is the conditional expectation,
+
+$$
+g(W) = E[Y \mid W],
+$$
+
+which is also called the regression function of $Y$ on $W$.
+
+Specifically, it solves the best prediction problem
+
+$$
+\min_{m(W)} E \left[ (Y - m(W))^2 \right] = \min_{m(W)} E\left[ E[(Y - m(W))^2 \mid W] \right].
+$$
+
+By using $\beta'X = \beta' T(W)$, for any parameter $b$,
+
+$$
+E \left[ (Y - b'T(W))^2 \right] = E \left[ \left(g(W) - b'T(W) \right)^2 \right] + E\left[ \left( Y - g(W) \right)^2 \right],
+$$
+
+That is, the mean squared prediction error (l.h.s.) = the mean squared approximation error of $b'T(W)$ to $g(W)$ (1st term of r.h.s) + a constant that does not depend on $b$ (2nd term of r.h.s.).
+
+Thus, the BLP $\beta'T(W)$ is the ***Best Linear Approximation*** **(BLA)** to the best predictor $g(W)$.
+
+## 1.3 Inference about predictive effects or association
+
+Consider the linear model as
+
+$$
+Y = \beta_1 D + \beta_2' W + \varepsilon \, ,
+$$
+
+where $D$ represents the "target" regressor of interest, and $W$ represents the other regressors, sometimes called the controls.
+
+### **Understanding** $\beta_1$ **via "Partialling-Out"**
+
+In the population, we define the partialling-out operation as a procedure that takes a random variable $V$ and creates the "residualized" variable $\tilde{V}$ by subtracting the part of $V$ that is linearly predicted by $W$:
+
+$$
+\tilde{V} = V - \gamma_{VW}' W, \quad \gamma_{VW} \in \arg\min_{\gamma} E[(V - \gamma' W)^2].
+$$
+
+When $V$ is a vector, we apply the operation to each component.
+
+It can be shown that the partialling-out operation is linear in the sense that
+
+$$
+Y = \nu V + \mu U \, \Rightarrow \, \tilde{Y} = \nu \tilde{V} + \mu \tilde{U},
+$$
+
+with respect to $W$.
+
+Thus, for the regression equation $Y = \beta_1 D + \beta_2' W + \varepsilon, \, E[\varepsilon (D, W')'] = 0$, we get
+
+$$
+\tilde{Y} = \beta_1 \tilde{D} + \beta_2' \tilde{W} + \tilde{\varepsilon} = \beta_1 \tilde{D} + \varepsilon, \quad E[\varepsilon \tilde{D}] = 0. 
+$$
+
+This equation implies that $E[\varepsilon \tilde{D}]=0$ are the Normal Equations for the population regression of $\tilde{Y}$ on $\tilde{D}$. Therefore,
+
+> **Theorem 1.3.1** (Frisch-Waugh-Lovell): Assume that $Y$, $D$, $W$ have finite second moments and that $D$ is not perfectly predictable by $W$, i.e., $E[\tilde{D}^2] > 0$. The population linear regression coefficient $\beta_1$ can be recovered from the population linear regression of $\tilde{Y}$ on $\tilde{D}$:
+>
+> $$
+> \beta_1 = \arg\min_{b_1} E\left[ \left( \tilde{Y} - b_1 \tilde{D} \right)^2 \right] = \left(E[\tilde{D}^2] \right)^{-1} E[\tilde{D}\tilde{Y}]. 
+> $$
+
+In other words, $\beta_1$ can be interpreted as a (univariate) linear regression coefficient in the linear regression of *residualized* $Y$ on *residualized* $D$.
+
+However, when $p/n$ is not small, using sample linear regression for partialling-out won't be such a good idea, as indicated by Theorem 1.2.1:
+
+> **Theorem 1.2.1** (Approximation of BLP by OLS): Under regularity conditions, the root mean square approximation error (RMSE) is bounded by:
+>
+> $$
+> \text{const}_{P, \alpha} \cdot \sqrt{E\varepsilon^2} \sqrt{p/n},
+> $$
+>
+> the inequality holds with probability approaching $1-\alpha$ as $n \rightarrow \infty$, and $\text{const}_{P,\alpha}$ is a constant that depends on the distribution of $(Y,X)$ and $\alpha$.
+
+The alternative is to use penalize regression or dimension reduction.
+
+### Adaptive statistical inference
+
+The large sample properties of the estimator $\hat{\beta}_1$:
+
+> Theorem 1.3.2 (Adaptive Statistical Inference): Under regularity conditions and if $p/n \approx 0$, the estimation error in $\check{D}_i$ and $\check{Y}_i$ has no first order effect on the stochastic behavior of $\hat{\beta_1}$, where $\check{V}_i$ is the residual left over after predicting $V_i$ with controls $W_i$ in the sample. Namely,
+>
+> $$
+> \sqrt{n} (\hat{\beta}_1 - \beta_1) \approx \sqrt{n} \ \mathbb{E}_n [\tilde{D}\varepsilon]/\mathbb{E}_n \left[\tilde{D}^2 \right]
+> $$
+>
+> and consequently,
+>
+> $$
+> \sqrt{n} (\hat{\beta}_1 - \beta_1) \stackrel{a}{\sim} N(0, V)
+> $$
+>
+> where
+>
+> $$
+> V = \left( E \left[\tilde{D}^2 \right] \right)^{-1} \mathbb{E}\left[ \tilde{D}^2 \varepsilon^2 \right] \left( E \left[\tilde{D}^2 \right] \right)^{-1}.
+> $$
+
+The adaptivity refers to the fact that estimation of residuals $\check{D}$ has a negligible impact on the large sample behavior of the OLS estimator - the approximate behavior is the same as if we had used true residuals $\tilde{D}$ instead.
