@@ -1,0 +1,62 @@
+---
+author: "Ming Yuan"
+format:
+    pdf: default
+    gfm: default
+editor: visual
+---
+
+# Reading Note: Latent Variable Causal Discovery under Selection Bias
+
+> Accepted by ICML 2025.
+
+> Dai, H., Qiu, Y., Ng, I., Dong, X., Spirtes, P., & Zhang, K. (2024). Latent Variable Causal Discovery under Selection Bias. Proceedings of the 41st International Conference on Machine Learning (ICML).
+
+![Poster in ICML 2025](poster-dai-icml2025.png)
+
+## Summary
+
+*(Copied from Bytez)* This research paper explores how to find cause-and-effect relationships in data where some important information is hidden (like personality traits) and where the data might be biased (like certain people being more likely to answer a survey). The authors created a new method that uses a special mathematical tool called **rank constraint**s to uncover these hidden relationships even when selection bias is present. They tested their method using simulations and real-world data and found it to be effective in revealing the underlying causes. This work is important for better understanding complex systems in psychology and social sciences.
+
+-   **Identify whether a third variable is a confounder or a collider.**
+
+## Summary of methodology
+
+This paper introduces **generalized rank constrains** to uncover latent variable causal structures even when the data is affected by selection bias.
+
+Here is a summary of the approach:
+
+1.  The authors extend traditional rank consraints, used to detect latent variables in linear Gaussian models, to settings with selection bias, focusing on linear selection mechanisms (such as truncation, logistic, or probit selection).
+2.  They model the effect of selection by augmenting the original causal graph with additional nodes that represent the selection mechanisms, creating a "selection-augmented graph."
+3.  The core innovation is a new graphical criterion (Theorem 1) that characterizes the ranks of covariance submatrics in the observed, selection-biased data. This generalizes previous t-separation concepts, allowing the identification of low-rank structures that reflect both latent variables and selection bias.
+4.  The method demonstrates that, under certain conditions, it is possible to distinguish between the effects of latent variables and selection bias using these generalized rank constrains.
+5.  The apporach is validated both theoretically and empirically, showing improved recovery of latent causal structures and selection mechanisms compared to existing methods.
+
+## Original rank constrains
+
+Suppose $\Sigma_{A,B}$ is the variance-covariance matrix of A, B.
+
+-   **Proposition 1** (Conditional independencies as low ranks): Let A, B, C be disjoint subsets of X. Then the conditional independence $A \perp\!\!\perp B \mid C$ holds if and only if the submatrix $\Sigma_{A \cup C, B \cup C}$ has rank $|C|$.
+
+![Illustrative examples of rank constraints](Figure2.png)
+
+**Definition 1 (t-separation)**: ...
+
+**Proposition 2 (Graphical criterion of rank constraints)**: In a DAG G, for any two subsets $A, B \subset X$ that need not be disjoint, the equality $$
+\operatorname{rank}(\Sigma_{A,B}) = \min \{ |C| + |D|: (C, D) \ \text{t-separates} \ (A, B) \}
+$$
+
+holds for generic choice of model parameters.
+
+### Generalized Rank Constraints
+
+**Definition 2 (Linear selection mechanism)**: For a set of variables $X$, a linear selection mechanism is described by a configuration $S$, which consists of tuples $\{(V_i, \beta_i, \epsilon_i, \mathcal{Y}_i)\}_{i=1}^k$. Each tuple specifies a single selection condition, where:\
+- $V_i \subseteq X$ is the subset of variables from X directly involved in the $i$-th selection;\
+- $\beta_i \in \mathbb{R}^{|V_i|}_{\neq 0}$ is a vector of nonzero linear coefficients that specifies how variables in $V_i$ contribute to the selection;\
+- $\epsilon_i$ is an independent noise term that models selection randomness. It may follow an arbitrary distribution, including non-Gaussian, or be degenerate to a constant; - $\mathcal{Y}_i \subsetneq \mathbb{R}$ is the set of admissible values, a proper subset of $\mathbb{R}$, which may consist of a single value, multiple values, an interval, or a union of intervals, etc.
+
+For each single selection, we call $Y_i = \beta_i^\top V_i + \epsilon_i$ as its response variable. Finally, a sample of $X$ is included in the selected data if and only if $Y_i \in \mathcal{Y}_i$ for all $i = 1, \cdots, k$.
+
+**Definition 3 (Selection-augmented graph)**: Consider a DAG *G* with nodes *X* that represents the original data generating process for *X*, and a linear selection configuration $S=\{(V_i, \beta_i, \epsilon_i, \mathcal{Y}_i)\}$ with $k$ single selection mechanisms. The selection-augmented graph is a new DAG, denoted $\mathcal{G}^{(S)}$, obtained by augmenting *G* with the following:\
+- Additional selection response nodes $Y = \{Y_i \}_{i=1}^k$, and\
+- Additional edges $\{X_j \rightarrow Y_i : \forall i = 1, \ldots, k, X_j \in V_i \}$. ...
