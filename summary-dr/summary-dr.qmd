@@ -1,0 +1,528 @@
+---
+title: "A Summary on Doubly Robust Estimations and Double Machine Learning of Causal Effects"
+date: today
+format: html
+editor: visual
+bibliography: references.bib
+---
+
+## 1. Introduction
+
+In causal inference, a general causal estimand is average treatment effect (ATE), defined as the expectation of difference between the outcomes had everyone in the population received treatment ( $T=1$ ) , denoted as $Y(1)$, versus those had everyone received placebo ( $T=0$ ), denoted as $Y(0)$:
+
+$$
+\tau := \mathbb{E}[Y(1) - Y(0)] = \mathbb{E}[Y(1)] - \mathbb{E}[Y(0)]. 
+$$
+
+Denote $\mu_t = \mathbb{E}[Y(t)]$ for $t=0,1$.
+
+In observational studies in which treatment $T$ is not, or cannot be, randomly assigned individuals, confounding bias is usually a concern, as confounders, denoted as $X$, may distort the genuine causal relationship between the treatment $T$ and the outcome $Y$.
+
+Therefore, an essential task in estimating ATE for observational data is to adjust for confounding bias. Doubly robust (DR) and double machine learning (DML) are two robust approaches to estimate ATE even with trivial turbulations in the data.
+
+**Identification assumptions** include:
+
+1.  **Stable unit treatment value** assumption (**SUTVA**):
+    -   No interference between units: treatment received by one unit does not affect the outcome of any other unit;
+
+    -   Consistency of potential outcome: $Y_i = Y_i(t)$ if $T_i = t$.
+2.  **Ignorability**: $(Y_i(1), Y_i(0)) \perp\!\!\perp T \mid X_i$.
+3.  **Overlap**: $0 < \operatorname{Pr}(T=1 \mid X) < 1$ for all $X$.
+
+------------------------------------------------------------------------
+
+## 2. Doubly Robust
+
+> Studied from [Reference-link](https://www2.stat.duke.edu/~fl35/teaching/640/Chap3.5_Doubly%20Robust%20Estimation.pdf)
+>
+> and [A Tutorial on Doubly Robust Learning for Causal Inference](https://arxiv.org/html/2406.00853v1)
+
+This method consists of two parts: the propensity score model and the outcome regression model.
+
+### 2.1 Propensity score model and inverse probability weighting (IPW)
+
+A propensity score is the probability of a unit being assigned to a specific treatment group given its observed characteristics.
+
+The definition of a propensity score is
+
+$$
+e(x) = \operatorname{Pr}(T=1 \mid X = x). 
+$$
+
+Accordingly, the generalized propensity score for a categorical treatment is defined by
+
+$$
+e(t, x) = \operatorname{Pr}(T=t \mid X=x), \quad t = 1, \ldots, M.
+$$
+
+and that for a continuous treatment is given by
+
+$$
+e(t, x) = f_{T \mid X}( t \mid x).
+$$
+
+Thanks to (Rosenbaum and Rubin, 1983), by law of iterated expectations and total expectation:
+
+$$
+\mathbb{E}_{Y}[Y(t)] = \mathbb{E}_{(X,Y)} \left[ \frac{Y(t) \mathbb{I}(T = t)}{e(T, X)} \right]. 
+$$
+
+For a let $\hat{w}_i(t) = 1/\hat{e}(t, x_i)$, then we can construct the (stabilized) inverse probability weighting estimator accordingly:
+
+$$
+\hat{\mathbb{E}}[Y(t)]_{ipw} = \sum_{i=1}^n \frac{\hat{w}_i(t) \mathbb{I}(T_i=t) \cdot Y_i}{\hat{w}_i(t) \mathbb{I}(T_i=t) }.  
+$$
+
+Thus, for a binary treatment $T$, let $\hat{w}_i = 1/\hat{e}(x_i) \equiv 1/\hat{e}(1, x_i)$, we have
+
+$$
+\hat{\tau}_{ipw} = \hat{E}[Y(1)]_{ipw} - \hat{E}[Y(0)]_{ipw} 
+$$
+
+$$
+= \frac{\sum_{i=1}^n \hat{w}_i T_i \cdot Y_i}{\sum_{i=1}^n \hat{w}_i T_i} - \frac{\sum_{i=1}^n (1-\hat{w}_i) (1-T_i) \cdot Y_i}{\sum_{i=1}^n (1-\hat{w}_i) (1-T_i)}.
+$$
+
+This method relies on the modelling of propensity score.
+
+If the PS model is correct, then $\hat{\tau}_{ipw}$ is consistent, but can be inefficient.
+
+If the propensity score model is misspecified, the IPW estimator is biased.
+
+Moreover, if the propensity score is close to 0 or 1 in a binary treatment case, the IPW estimator becomes unstable.
+
+> In summary, the propensity score model is to estimate the conditional probability $e(t, x) = \operatorname{Pr}(T = t \mid X=x)$.
+
+### 2.2 Outcome regression (OR) model
+
+Under the ignorability and consistency assumption, we have
+
+$$
+\mathbb{E}_Y[Y(t)] = \mathbb{E}_X[\mathbb{E}_Y[Y(t) \mid X]] = \mathbb{E}_X[\mathbb{E}_Y [Y \mid T = t ,X]]. 
+$$
+
+Thus, the outcome regression model is
+
+$$
+m_t(X) = \mathbb{E}[Y \mid T = t, X], \quad t = 0, 1.
+$$
+
+Then accordingly the ATE estimator can be
+
+$$
+\hat{\tau}_{OR} = \frac{1}{n}\sum_{i} \left(\hat{m}_1(x_i) - \hat{m}_0(x_i) \right),
+$$or
+
+$$
+\hat{\tau}_{adj} = \frac{1}{n} \sum_{i=1}^n \left\{ T_i (Y_i - \hat{m}_0(x_i)) + (1 - T_i) (\hat{m}_1(x_i) - Y_i) \right\}, 
+$$
+
+that is, the sum of the estimated (individual) treatment effect of all individuals.
+
+This method relies on the correct specification of the outcome model. "If the specified regression model is true, then $\hat{\tau}_{adj}$ (and/or $\hat{\tau}$) is consistent and efficient, but not otherwise."
+
+Besides, it can be sensitive when overlap is weak. (This is also the case for IPW?)
+
+### 2.3 Doubly robust estimator
+
+The doubly robust estimator combines both the IPW and the OR estimators. It is a consistent estimator of ATE if either the propensity score or the outcome regression model is, but not necessary both are,correctly specified.
+
+#### 2.3.1 Definition of DR estimators
+
+Following the notations defined above, the DR estimator for the treatment group ( $T=1$ ) is
+
+$$
+\mathbb{E}[Y(1)]_{DR} = \mathbb{E} \left[ \frac{TY}{e(X)} - \frac{T-e(X)}{e(X)} m_1(X) \right]
+$$
+
+$$
+= \mathbb{E}\left[ \frac{T(Y - m_1(X))}{e(X)} + m_1(X) \right].
+$$
+
+Here, the first equation indicates that the DR estimator is an **augmented IPW (aIPW)** estimator by outcome regression (OR), whereas the second equation indicates that it is an augmented OR estimator by IPW.
+
+Accordingly, the DR estimator for the control group ( $T=0$ ) is
+
+$$
+\mathbb{E}[Y(0)]_{DR} = \mathbb{E} \left[\frac{(1-T)Y}{1-e(X)} - \frac{(1-T) - (1-e(X))}{1-e(X)} m_0(X) \right]
+$$
+
+$$
+= \mathbb{E} \left[\frac{(1-T)(Y - m_0(X))}{1-e(X)} + m_0(X)\right].
+$$
+
+Thus,
+
+$$
+\tau_{DR} = \mathbb{E}[Y(1)]_{DR} - \mathbb{E}[Y(0)]_{DR}
+$$
+
+$$
+= \mathbb{E}\left[ (m_1(X) - m_0(X)) + \frac{T - e(X)}{e(X)(1-e(X))} (Y - m_T(X)) \right].
+$$
+
+Correspondingly, the ATE estimator via DR is
+
+$$
+\hat{\tau}_{DR} = \hat{\mathbb{E}}[Y(1)]_{DR} - \hat{\mathbb{E}}[Y(0)]_{DR}
+$$
+
+$$
+= \frac{1}{n} \sum_{i=1}^n \left\{  \frac{T_i Y_i}{\hat{e}_i} - \frac{T_i - \hat{e}_i}{\hat{e}_i} \hat{m}_{1i} \right\} - \frac{1}{n} \sum_{i=1}^n \left\{ \frac{(1-T_i)Y_i}{1-\hat{e}_i} - \frac{(1-T_i)-(1-\hat{e}_i)}{1 - \hat{e}_i} \hat{m}_{0i}\right\}.
+$$
+
+#### 2.3.2 Properties of DR estimators
+
+Take $\hat{\mathbb{E}}[Y(1)]$ as an example. The properties of $\hat{E}[Y(0)]$ is symmetric.
+
+It shows that
+
+$$
+\hat{\mathbb{E}}[Y(1)]_{DR}
+= \frac{1}{n} \sum_{i=1}^n \left\{  \frac{T_i Y_i}{\hat{e}_i} - \frac{T_i - \hat{e}_i}{\hat{e}_i} \hat{m}_{1i} \right\}
+$$
+
+converges to
+
+$$
+\mathbb{E}[Y(1)]_{DR} =\mathbb{E} \left[ \frac{TY}{e(X)} - \frac{T-e(X)}{e(X)} m_1(X) \right]
+$$
+
+$$
+= \mathbb{E} \left[ Y(1) + \frac{ \{T - e(X) \} }{e(X)} \cdot \{Y(1) - m_1(X) \} \right]
+$$
+
+$$
+= \mathbb{E}[Y(1)] + \mathbb{E} \left[ \frac{ \{T - e(X) \} }{e(X)} \cdot \{Y(1) - m_1(X) \} \right].
+$$
+
+Let the second term denoted by $R$.
+
+In order to make the DR estimator unbiased, it is required that $R=0$.
+
+It is clear that
+
+$$
+R = \mathbb{E}_X \left[ \mathbb{E}_{T,Y|X} \left[ \frac{T-e(X)}{e(X)}\cdot \{Y(1) - m_1(X)\} \bigg| X \right] \right]
+$$
+
+$$
+= \mathbb{E}_X \left[ \frac{\{\mathbb{E}[T \mid X] - e(X) \} }{e(X)} \cdot \{  \mathbb{E}[Y(1) \mid X] - m_1(X)\} \right].
+$$
+
+-   When the PS model $e(x) = \mathbb{E}[T\mid X=x] \equiv \operatorname{Pr}(T=1 \mid X=x)$ is correctly specified, regardless of the correctness of the OR model $m_1(x)$, then
+
+    $$
+    \mathbb{E}[T \mid X] - e(X) = 0,
+    $$
+
+    and thus, $R=0$.
+
+-   When the OR model $m_1(x) = \mathbb{E}[Y \mid T=1, X=x] \equiv \mathbb{E}[Y(1) \mid X=x]$ is correctly specified, regardless of the correctness of the PS model $e(x)$, then
+
+    $$
+    \mathbb{E}[Y(1) \mid X = x] - m_1(X) = 0,
+    $$
+
+    and thus, $R=0$.
+
+**In summary**
+
+-   In both cases, the second term goes to 0 in large samples, and thus $\hat{\mathbb{E}}[Y(1)]_{DR}$ is consistent (asymptotically unbiased) for $\mathbb{E}[Y(1)]$, and so as $\hat{\mathbb{E}}[Y(0)]_{DR}$. That is, DR is a large sample property.
+
+-   Poor overlap: DR inherits the problem of IPW with extreme weights, and amplify the residuals from the outcome model.
+
+    -   **With poor overlap**, DR with non-trimmed IPW is usually worse than the outcome model estimator; in this case, one should **use DR with trimmed weights or use overlap weights (no augmentation)**.
+
+-   Check simulation results from [@li2019].
+
+    -   **Outcome model is much more dominant** than PS model in causal estimates.
+
+    -   Under poor overlap, correct specification of the PS model does little to correct the bias from a misspecified outcome model.
+
+-   However, **NO DR for overlap weights**: this is because the average treatment effect of the overlapped (**ATO**) estimand involves $e(X)$, and if $e(X)$ is misspecified, ATO is problematic.
+
+-   Find the efficient estimating function for weighted average treatment effect (WATE).
+
+#### 2.3.3 Efficiency of DR estimator (?)
+
+-   **Efficiency** quantifies how much variance an estimator has relative to the *best possible* (lowest variance) estimator...
+
+-   ...
+
+-   The DR estimator is semiparametric in the sense that it does not require correct specification of the entire data-generating mechanism.
+
+-   If $e(X)$ and $m_T(X)$ are modeled correctly, $\hat{\tau}_{DR}$ will have smaller variance than $\hat{\tau}_{ipw}$ in large samples.
+
+-   If $m_T(X)$ is correct, $\hat{\tau}_{DR}$ has larger variance in large samples than $\hat{\tau}_{OR}$.
+
+#### 2.3.4 Variance of DR estimator
+
+Approach 1: One can always use **bootstrap** to estimate the variance.
+
+**Approach 2**: the **empirical variance estimator** with **large samples**
+
+-   Proposed by Lunceford and Davidian (2004).
+
+-   Let $\hat{\tau}_i$ be the DR estimator of ATE given data $W_i = (Y_i, T_i, X_i)$, i.e.,
+
+-   $$
+    \hat{\tau}_i = \left[\frac{T_i Y_i}{\hat{e}_i} - \frac{T_i - \hat{e}_i}{\hat{e}_i}\hat{m}_1(x_i) \right] - \left[\frac{(1-T_i) Y_i}{1-\hat{e}_i} - \frac{(1-T_i) - (1-\hat{e}_i)}{1-\hat{e}_i} \hat{m}_0(x_i) \right]
+    $$
+
+-   $$
+    = \left[ \frac{T_i - \hat{e}_i}{\hat{e}_i (1 - \hat{e}_i)} (Y_i - \hat{m}_{t_i}(x_i)) \right] + \left[ \hat{m}_1(x_i) -\hat{m}_0(x_i) \right]. 
+    $$
+
+-   The influence function (IF) for the DR estimator is given by
+
+    -   $$
+        \hat{\psi}(W_i) = \hat{\tau}_i - \hat{\tau}_{DR},
+        $$
+
+-   and thus the empirical variance estimator is given by
+
+    -   $$
+        s^2_{DR} = \frac{1}{n^2} \sum_{i=1}^n \hat{\psi}(W_i)^2 = \frac{1}{n^2} \sum_{i=1}^n (\hat{\tau}_i - \hat{\tau}_{DR}^2)^2.
+        $$
+
+-   Works well in simulations with large samples.
+
+-   This approach does not take into account of the variability in estimating $e(X)$ and $m_t(X)$, and so **may be biased in small samples**.
+
+Approach 3: robust **sandwich variance** **estimator** via M-estimation...
+
+-   The sandwich variance estimator can varies if applying various PS and OR models;
+
+-   Mathematically challenging, especially when using ML approaches to fit PS or OR models.
+
+-   Check [@li2019].
+
+### 2.5 DR for balancing weights and Weighted ATE (WATE)
+
+-   $h(x)$: tilting function that defines the target population as $h(X)f(X)$, where $f(X)$ is the joint density of the source population (?).
+
+-   The **balancing score** is defined as:
+
+    -   $$
+        w_1(x) \propto \frac{f(x)h(x)}{f(x) e(x)} = \frac{h(x)}{e(x)},
+        $$
+
+    -   $$
+        w_0(x) \propto \frac{f(x)h(x)}{f(x)(1-e(x))} = \frac{h(x)}{1-e(x)}.
+        $$
+
+-   The augmented weighting estimator, i.e., the regression estimator augmented by weighted residuals:
+
+    -   $$
+        \hat{\tau}^h = \frac{\sum_i h(X_i)\{\hat{m}_1(X_i) - \hat{m}_0(X_i) \}}{\sum_i h(X_i)} + \frac{\sum_i w_1(X_i) T_i \{Y_i - \hat{m}_1(X_i)\} }{\sum_i w_1(X_i) T_i} 
+        $$
+
+    -   $$
+        - \frac{\sum_i w_0(X_i) (1-T_i) \{Y_i - \hat{m}_0(X_i)\} }{\sum_i w_0(X_i) (1-T_i)}.
+        $$
+
+-   Can choose $h(X)$ as a function of PS and use this augmented for alternative causal estimands, such as ATO.
+
+### 2.6 More on DR (part II)
+
+-   Some modifications for a GLM... (Score function? Clever covariate? Weighted regression?)
+-   ...
+
+------------------------------------------------------------------------
+
+## 3. Double/Debiased/Orthogonal Machine Learning
+
+> [Chernozhukov, Victor, et al. "Double/debiased machine learning for treatment and causal parameters." arXiv preprint arXiv:1608.00060 (2016).](https://arxiv.org/pdf/1608.00060)
+
+Double Machine Learning is a method for estimating **(heterogeneous) treatment effects** under unconfoundedness.
+
+It is useful in situations such as: confounders are too many (high-dimensonal) for classical statistical approaches to be applicable; or their effect on the treatment on treatment and outcome cannot be satisfactorily modeled by parametric functions, i.e., their relations are non-parametric. These problems can both be addressed via machine learning techniques.
+
+<https://www.pywhy.org/EconML/spec/estimation/dml.html>
+
+### 3.1 Neyman orthogonal condition
+
+-   $W=(Y,T,X)$: set of variables;
+
+-   $\tau_0$: parameter of interest, e.g., ATE;
+
+-   $\eta$: nuisance functions, with population value $\eta_0$.
+
+-   $\psi(W, \tau_0, \eta_0)$: score function, required to satisfy the following conditions:
+
+    1.  Identification condition: $\mathbb{E}[\psi(W, \tau_0, \eta_0)] = 0$;
+    2.  Neyman orthogonality condition: $\partial_\eta \mathbb{E}[\psi(W, \tau_0, \eta)] \bigg|_{\eta = \eta_0} = 0$.
+
+-   Estimators constructed using moment conditions that satisfy the Neyman orthogonality condition are **robust to small mistakes in nuisance parameters** $\eta$.
+
+-   Inferences for $\tau_0$ ...
+
+### 3.2 Model assumption and the orthogonal score
+
+> [Foster, Dylan J., and Vasilis Syrgkanis. "Orthogonal statistical learning." *The Annals of Statistics* 51.3 (2023): 879-908.](https://arxiv.org/abs/1901.09036)
+
+Consider the following model, which is also called the interactive regression model (IRM), where the effect of $T$ and $X$ may not be additively separable.
+
+$$
+Y = g_0(T,X)+ \zeta, \, \mathbb{E}[\zeta \mid T, X] = 0; \\
+T = e_0(X) + \nu, \, \mathbb{E}[\nu \mid X] = 0; \\
+\mathbb{E}[\zeta \cdot \nu \mid X] = 0.
+$$
+
+-   \(1\) The outcome model is $g_0(t,x) = \mathbb{E}[Y \mid T=t, X=x]$.
+
+    -   Or, each treatment group $(T=0, 1)$ can fit their own outcome model, denoted by $m_0(x) := \mathbb{E}[Y(0) \mid X] = \mathbb{E}[Y \mid T=0, X]$ and $m_1(x) := \mathbb{E}[Y(1) \mid X] = \mathbb{E}[Y \mid T = 1, X]$, as above.
+
+    > -   **T-learner**: under consistency and unconfoundedness, $m_0(x)$ and $m_1(x)$ model the expected counterfactual outcomes separately for each treatment group. Thus, $\hat{\tau}(x) = \hat{m}_1(x) - \hat{m}_0(x)$.
+    > -   **S-learner**: under consistency and unfonfoundedness, $g(t,x) = \mathbb{E}[Y \mid T=t, X = x]$ estimates the expected counterfactual outcome as a function of both treatment assignment variable $T$ and confounders (covariates) $X$. Thus, $\hat{\tau}(x) = \hat{g}(1,x) - \hat{g}(0,x)$.
+
+-   \(2\) The propensity score model is $e_0(X) = \mathbb{E}[T \mid X]$.
+
+-   These two models (functions) can be estimated via machine learning methods.
+
+-   To estimate the ATE $\tau$, the score function is
+
+$$
+\psi(W; \tau, \eta) = g(1,X) - g(0,X) + \left[ \frac{ T - e(X) }{e(X) (1-e(X)) } \cdot (Y - g(T,X))\right] - \tau,
+$$
+
+-   where $\eta(X) = (g(1,X), g(0,X), e(X))^\top$ is the nuisance parameter with true value $\eta_0(X) = (g_0(1,X), g_0(0,X), e_0(X))^\top$ .
+
+    -   The second component on the right-hand side of $\psi (W; \tau, \eta)$ is the residual correction/IPW part. If $\eta = \eta_0$, its conditional expectation given $X$ equals 0 since $e(X) = \mathbb{E}[T \mid X]$.
+
+-   Well, this is just an example score function satisfying Neyman orthogonal condition. It defines a corresponding loss function, namely the **doubly-robust loss (DR-Loss)**:
+
+    -   $$
+        \mathcal{L}(\tau, \{g, e\}; w) = \mathbb{E}\left\{ \left[ g(1,X) - g(0,X) + \frac{(T - e(X))  \cdot (Y - g(T,X)) }{e(X) (1-e(X))}- \tau(X)  \right]^2 \right\}.
+        $$
+
+-   An alternative score function that satisfies the orthogonal condition is given by
+
+    $$
+    \psi(W; \tau, \eta) := \{Y - \mathbb{E}[Y \mid X] - \tau(X)(T - \mathbb{E}[T \mid X])\}(T - \mathbb{E}[T \mid X]).
+    $$
+
+    Accordingly, it defines a loss function called the **residual-on-residual loss (R-loss)**, given by
+
+    -   $$
+        \mathcal{L}(\tau, \{g,e\};w) = \mathbb{E} \left[(Y - \mathbb{E}[Y \mid X] - \tau(X)(T - e(X)))^2 \right].
+        $$
+
+-   $\tau(X)$ is optional; If $\tau(X) \equiv \tau$, it suggests that the treatment effect is homogeneous. Or, by setting $\tau(X) = \tau$, we assume that the treatment effect is homogeneous and we estimate the ATE instead of CATE.
+
+> [*Causal ML*](https://causalml-book.org/) (page 254-255) suggests that:
+>
+> -   For partial linear regression models (PLM)
+>
+>     $$
+>     Y = T \cdot \tau(X) + g(X) + \epsilon, \, \mathbb{E}[\epsilon \mid T,X] = 0,
+>     $$
+>
+>     the score function corresponding to *R-loss* is suggested to be employed.
+>
+>     -   It is also the default loss function of `EconML`.
+>
+> -   For interactive regression model (IRM), the score function corresponding to DR-loss is suggested to employ.
+
+### 3.3 The DML procedure
+
+**Step 1: Sample-splitting**
+
+-   Split data into *K* folds (e.g. *K* = 2 or 5);
+
+-   Each fold will be used ***once*** for estimation of the target parameter (e.g., $\tau$), while the others are used to train nuisance functions.
+
+**Step 2: Estimate nuisance functions**
+
+-   For each fold $k=1, \ldots, K$:
+
+    -   Train ML models for $\hat{e}^{(-k)}(X), \, \hat{g}^{(-k)}(T,X)$ using all data except the $k$-th fold.
+
+    -   Predict $\hat{e}_i, \hat{g}_{0i}:=\hat{g}^{(-k)}(0,x_i), \hat{g}_{1i}:= \hat{g}^{(-k)}(1,x_i)$ for the held-out fold $k$.
+
+**Step 3: Compute orthogonal score for each observation**
+
+-   For each $i$ in the held-out fold $k$, estimates its orthogonal score:
+
+$$
+\hat{M} (\tau, \hat{\eta}) = \frac{1}{n_k} \sum_{i=1}^{n_k} \psi(W_i; \tau, \hat{\eta}_i), 
+$$
+
+where the sum is taking over the held-out fold, and the score function can be the *doubly-robust score* or the *residual-on-residual score*, depending on the exploring question.
+
+**Step 4: Estimate the ATE**
+
+-   Set the estimator $\hat{\tau}$ as the solution to the equation $\hat{M}(\hat{\tau}, \hat{\eta}) = 0$.
+
+<!-- -->
+
+-   If employing the *doubly-robust score*,
+
+$$
+\hat{\tau} = \frac{1}{n_k} \sum_{i=1}^{n_k} \hat{\tau}_i(w_i), \, \text{where } \hat{\tau}_i(w_i) =  \frac{ T_i - \hat{e}_i }{ \hat{e}_i (1 - \hat{e}_i) } \cdot (Y - \hat{g}_{T_i,i}) + (\hat{g}_{1i} - \hat{g}_{0i}).
+$$
+
+-   If employing the *residual-on-residual score*, the ATE estimator is the *partial correlation*, given by
+
+$$
+\hat{\tau} = \frac{\sum_{i=1}^{n_k} (Y_i - \hat{\mathbb{E}}[Y \mid X=x_i ])(T_i  - \hat{e}(x_i))}{\sum_{i=1}^{n_k}(T_i - \hat{e}(x_i))^2},
+$$
+
+**Step 5: Compute standard error**
+
+-   The asymptotic variance is estimated as (not applicable for R-loss).
+
+$$
+\hat{V} = \frac{1}{n_k} \sum_{i=1}^{n_k} (\hat{\tau}_i - \hat{\tau})^2
+$$
+
+-   Alternatively, the robust sandwich estimator is
+
+$$
+\hat{V} = \frac{1}{n_k} \sum_{i=1}^{n_k} [\hat{\varphi}(W_i) \hat{\varphi}(W_i)'] - \frac{1}{n_k} \sum_{i=1}^{n_k}[\hat{\varphi}(W_i)] \frac{1}{n_k} \sum_{i=1}^{n_k}[\hat{\varphi}(W_i)]', 
+$$
+
+where, across all individuals $i$ in the $k$-th fold,
+
+$$
+\hat{\varphi}(W_i) = - \hat{J}_0^{-1} \psi(W_i; \hat{\tau}, \hat{\eta}_i), 
+$$
+
+and
+
+$$
+\hat{J}_0 := \frac{1}{n_k} \sum_{i=1}^{n_k} \partial_{\tau}  \psi(W_i; \hat{\tau}, \hat{\eta}_i). 
+$$
+
+-   Accordingly, the standard error is $\hat{\sigma} = \sqrt{\hat{V} / n_k}$, and the confidence intervals of $\hat{\tau}$ is $\hat{\tau} \pm z_{1-\alpha/2} \hat{\sigma}$.
+
+> Check `EconML` (python) or `DoubleML` (R). Double ML applies on heterogeneous treatment effect cases(?), which estimate the conditional average treatment effect $\tau(X)$ (CATE) according to (individualized) characteristics..
+>
+> Nevertheless, the ATE estimation can be obtained from CATE by integrating (taking average) over conditions (characteristics), i.e., $\tau = \mathbb{E}_X[\tau(X)]$.
+
+**P.S.: "Naive" or prediction-based ML approach is bad:**
+
+-   Though obtaining excellent prediction performance, the estimate $\hat{\theta}_0$ is biased.
+
+### 3.4 Advantages of DML
+
+-   Key procedures of DML: Sample splitting / cross-fitting + Orthogonal loss.
+
+-   Avoid potential overfitting (in DR)
+
+------------------------------------------------------------------------
+
+## 4. Targeted Learning: Targeted Maximum Likelihood Estimator
+
+------------------------------------------------------------------------
+
+## 5. Summary
+
+### 5.1 DR and DML
+
+-   DR is statistical approach to estimate the (C)ATE. It estimates the outcome regression and propensity score models without splitting the data. It is at risk of overfitting. It is preferred to be applied on datasets of a moderate size and in situations that models are parametric.
+
+    -   ChatGPT says its inference validity is limited, whereas the inference validity of DML is theoretically guaranteed..(?)
+
+-   DML is a machine learning approach to estimates (C)ATE. It follows the pipeline of ML: sample splitting, train both the outcome and propensity score models on the training set and make inference on the causal estimand of interest on the testing set. It can employ the doubly-robust estimator or other estimator that meet the **Neyman orthogonal condition**. It can be applied on high-dimensional cases with ML-based approaches.
