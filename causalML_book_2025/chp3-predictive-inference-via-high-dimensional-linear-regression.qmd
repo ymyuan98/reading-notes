@@ -1,0 +1,29 @@
+---
+title: "Book: Applied Causal Inference Powered by ML and AI"
+author: "Notes by Ming Yuan"
+date: last-modified
+format:
+    pdf: default
+    gfm: default
+editor: visual
+---
+
+# Chapter 3: Predictive Inference via High-Dimensional Linear Regression
+
+Consider a regression model:
+
+$$
+Y = X\beta + \epsilon, \quad \epsilon \perp X,
+$$
+
+where $X = (X_1, \ldots, X_p)$ is $p$-dimensional.
+
+-   **High-dimensional setting**: $p$ is large, and possibly $p \gg n$.
+
+Except for high-dimensional features, another source for high-dimensionality is using constructed features or regressors of the form $$
+X = T(W) = (T_1(W), \ldots, T_p(W))
+$$ where each transformation $T_j(\cdot)$ can be nonlinear so as to capture more complex patterns that exist in the data.
+
+## Lasso
+
+## Ridge Regression

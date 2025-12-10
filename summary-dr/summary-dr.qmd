@@ -423,7 +423,7 @@ $$
 >
 >     -   It is also the default loss function of `EconML`.
 >
-> -   For interactive regression model (IRM), the score function corresponding to DR-loss is suggested to employ.
+> -   For interactive regression model (IRM), the score function corresponding to *DR-loss* is suggested to employ.
 
 ### 3.3 The DML procedure
 
@@ -454,9 +454,6 @@ where the sum is taking over the held-out fold, and the score function can be th
 **Step 4: Estimate the ATE**
 
 -   Set the estimator $\hat{\tau}$ as the solution to the equation $\hat{M}(\hat{\tau}, \hat{\eta}) = 0$.
-
-<!-- -->
-
 -   If employing the *doubly-robust score*,
 
 $$

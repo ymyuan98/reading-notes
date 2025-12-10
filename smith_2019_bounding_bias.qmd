@@ -1,0 +1,19 @@
+---
+title: "Reading note: Bounding Bias Due to Selection"
+format: html
+editor: visual
+---
+
+> [Smith, Louisa H.a; VanderWeele, Tyler J.a,b. Bounding Bias Due to Selection. Epidemiology 30(4):p 509-516, July 2019. \| DOI: 10.1097/EDE.0000000000001032](https://journals.lww.com/epidem/fulltext/2019/07000/bounding_bias_due_to_selection.7.aspx)
+
+## Overview by ChatGPT
+
+#### 0. Motivation
+
+-   The paper addresses how selection bias, e.g. non-participation, loss to follow-up, or restricting to a sub-population, can distort causal effect estimates.
+
+#### 1. “Bounding” the bias 
+
+-   Critically, these bounds do not require strong parametric assumptions about the unmeasured variables causing the bias (e.g. no assumption on functional form).
+
+-   The bounding factor depends on parameters that describe relationships between (a) the unmeasured factors that influence both selection and outcome, (b) selection, (c) exposure, and (d) outcome. By specifying plausible values for these parameters, one can access how big selection bias could be.

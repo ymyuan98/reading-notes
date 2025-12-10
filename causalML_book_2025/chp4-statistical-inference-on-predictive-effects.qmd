@@ -1,0 +1,12 @@
+---
+title: "Book: Applied Causal Inference Powered by ML and AI"
+author: "Notes by Ming Yuan"
+date: last-modified  
+date-format: yyyy-MM-dd 
+format:
+    pdf: default
+    gfm: default
+editor: visual
+---
+
+# Chapter 4. Statistical Inference on Predictive Effects in High-Dimensional Linear Regression Models
