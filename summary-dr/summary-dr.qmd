@@ -523,3 +523,5 @@ $$
     -   ChatGPT says its inference validity is limited, whereas the inference validity of DML is theoretically guaranteed..(?)
 
 -   DML is a machine learning approach to estimates (C)ATE. It follows the pipeline of ML: sample splitting, train both the outcome and propensity score models on the training set and make inference on the causal estimand of interest on the testing set. It can employ the doubly-robust estimator or other estimator that meet the **Neyman orthogonal condition**. It can be applied on high-dimensional cases with ML-based approaches.
+
+-   DML does not discriminate categorical or continuous treatments; what matters is the choice of orthogonal loss. For example, the DR-loss can only be applied to binary treatments, whereas the R-loss can be applied to both categorical and continuous treatments.
