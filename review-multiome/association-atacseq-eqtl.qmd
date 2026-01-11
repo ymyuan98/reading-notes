@@ -114,7 +114,15 @@ This paper uses integrative QTL and mediation analysis in Collaborative Cross (C
 
 ------------------------------------------------------------------------
 
-## Paper 4: (Not a multiomics paper)
+## Paper 4: (probably a benchmark)
+
+> [Mitra, S., Malik, R., Wong, W. *et al.* Single-cell multi-ome regression models identify functional and disease-associated enhancers and enable chromatin potential analysis. *Nat Genet* **56**, 627–636 (2024). https://doi.org/10.1038/s41588-024-01689-8](https://www.nature.com/articles/s41588-024-01689-8)
+
+With GitHub Repo [here](https://github.com/snehamitra/SCARlink/) and [notebooks to generate the figures](https://github.com/snehamitra/SCARlink/tree/main/paper_figures) at the same Repo.
+
+------------------------------------------------------------------------
+
+## Paper 5: A paper on causal discovery - gene regulatory network inference
 
 > [Luo, Gongxu, et al. "Gene regulatory network inference in the presence of selection bias and latent confounders." *arXiv preprint arXiv:2501.10124* (2025).](https://arxiv.org/pdf/2501.10124#page=1.00&gsr=0)
 
