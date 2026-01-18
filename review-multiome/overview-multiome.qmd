@@ -133,7 +133,7 @@ Main Application:
 
 ------------------------------------------------------------------------
 
-## Wordings
+## Words
 
 ### 1. 遗传性的 (Hereditary / Inherited)
 
@@ -158,6 +158,8 @@ This refers to traits or mutations that occur after conception and are not passe
 -   **Sporadic**: used when a disease (like a certain type of cancer or Alzeimer's) occurs in an individual without a family history or a known inherited genetic mutation.
 
 -   **Non-hereditary/Non-inherited**.
+
+3.  
 
 ------------------------------------------------------------------------
 
@@ -260,3 +262,39 @@ $$
 = (\hat{T}^\top \hat{T})^{-1} \hat{T}^\top Y 
 = (T^\top P_ZT)^{-1} T^\top P_Z Y.
 $$
+
+### 4. Peak calling - ATAC-seq
+
+-   **Peak calling**: a computational method used to **identify regions of the genome where there is a significant "signal" in sequencing data**; check which part of chromatin "opens" - chromatin accessible.
+
+    -   You sequence millions of DNA fragments and map them back to the genome. Some region will have
+
+        -   Many reads piled up = "open" chromatin (accessible)
+
+        -   Fewer or no reads = "closed" chromatin (not accessible)
+
+    -   Peak calling algorithm tries to find where those "piles" of reads are - these piles are called **peaks**;
+
+    -   **Peaks** = genome whose read counts are significantly higher than the background; likely regulatory elements (promoters, enhancers, etc.)
+
+-   Traditional approach:
+
+    1.  Call peaks across all cells
+    2.  Count accessibility in those peaks
+    3.  Correlate peak accessibility with gene expression
+
+-   Problems of peak calling:
+
+    -   Peak calling needs enough signal (reads) to detect peaks
+
+    -   Rare cell types might not have enough cells to call peaks reliably
+
+    -   Might miss important regulatory regions
+
+-   SCARlink's solution:
+
+    -   Skip peak calling entirely and use fixed 500 bp tiles everywhere;
+
+    -   Let the statistical model figure out which tiles matter.
+
+    -   More agnostic: no need to pre-deciding what's important based on peak calling thresholds.

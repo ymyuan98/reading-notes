@@ -114,11 +114,178 @@ This paper uses integrative QTL and mediation analysis in Collaborative Cross (C
 
 ------------------------------------------------------------------------
 
-## Paper 4: (probably a benchmark)
+## Paper 4: SCARlink (probably a benchmark)
 
 > [Mitra, S., Malik, R., Wong, W. *et al.* Single-cell multi-ome regression models identify functional and disease-associated enhancers and enable chromatin potential analysis. *Nat Genet* **56**, 627–636 (2024). https://doi.org/10.1038/s41588-024-01689-8](https://www.nature.com/articles/s41588-024-01689-8)
 
 With GitHub Repo [here](https://github.com/snehamitra/SCARlink/) and [notebooks to generate the figures](https://github.com/snehamitra/SCARlink/tree/main/paper_figures) at the same Repo.
+
+### In general
+
+-   **SCARlink** is a statistical model that predicts **gene expression (Y)** from **chromatin accessibility data (X)** at the single-cell level.
+
+    -   *Chromatin accessibility* = whether DNA is "open" enough for genes to be read
+
+    -   *Gene expression* = how much a gene is actually being transcribed into RNA
+
+### Statistical approach
+
+-   **Regularized Poisson regression**:
+
+    -   Why? Gene expression counts follow a count (Poisson) distribution.
+
+    -   **Input** **X**: chromatin accessibility (scATAC-seq) across 500bp "tiles" spanning $\pm$ 250kb
+
+        -   **500 bp tiles**: genome are divided into non-overlapping chunks that are **each 500 base pairs long**.
+
+            -   bp = base pairs (the A,T, G, C letters of DNA)
+
+            -   tile: a fixed-width segment of the genome,
+
+        -   $\pm$ **250kb window:**
+
+            -   kb = kilobases = 1,000 base pairs
+
+            -   250kb = 250,000 base pairs
+
+            -   $\pm$ 250kb = 250kb upstream (before) & 250kb downstream (after) the gene
+
+        -   Total window: \~500kb wide + gene body itself
+
+        -   To put together:
+
+            1.  Take the gene body (varies in length, could be 10kb, 100kb, etc.);
+            2.  Add 250kb upstream of gene start;
+            3.  Add 250kb downstream of gene start;
+            4.  Divide this entire region into 500 bp tiles.
+
+            ![Display: 500 bp "tiles" spanning +- 250 kb around each gene](images/500bp_tiles_span_pm_250kb_ar_gene.png){width="400"}
+
+        -   Each tile gets a count of how many chromatin accessibility "reads" fall within it.
+
+    -   **Output (Y)**: single-cell gene expression counts (scATAC-seq)
+
+    -   **Regularization**: L2 penalty (ridge regression) to prevent overfitting.
+
+    -   **Constraint**: non-negative coefficients (only learning positive regulatory effects)
+
+-   Used regularized Poisson regression with loss function (using **L2**-penalty)
+
+$$
+\frac{1}{n} \sum_{i=1}^n (e^{X_i \mathbf{w} + \epsilon} - Y_i(X_i \mathbf{w} + \epsilon)) + \alpha \| \mathbf{w}\|_2^2,
+$$
+
+-   $n$ : number of cells, $X$ : min-max scaled accessibility matrix, $\mathbf{y}$ corresponds to the gene expression vector, $\mathbf{w}$ is the learned regression coefficient vector and $\alpha$ is the regularization parameter.
+
+-   Left out 1/4 of the data for testing.
+
+-   Why is this cool?
+
+    1.  **Gene-level modeling**: Instead of testing individual peaks one-by-one, they model how ALL regulatory regions around a gene work together to affect expression.
+    2.  **No peak calling needed**: They use tiles of fixed width (500bp) rather than requiring peak calling algorithms, which can miss signals in rare cell types.
+        -   **Peak calling**: a computational method used to **identify regions of the genome where there is a significant "signal" in sequencing data**; check which part of chromatin "opens" - chromatin accessible.
+
+            -   **Peaks** = genome whose read counts are significantly higher than the background; likely regulatory elements (promoters, enhancers, etc.)
+
+            -   More on `overview-multiome.qmd`
+
+        -   Problems of peak calling:
+
+            -   Peak calling needs enough signal (reads) to detect peaks
+
+            -   Rare cell types might not have enough cells to call peaks reliably
+
+            -   Might miss important regulatory regions
+
+        -   SCARlink's solution:
+
+            -   Skip peak calling entirely and use fixed 500 bp tiles everywhere;
+
+            -   Let the statistical model figure out which tiles matter.
+
+            -   More agnostic: no need to pre-deciding what's important based on peak calling thresholds.
+    3.  **Interpretable coefficients**: The regression coefficients tell you which genomic regions are important for regulating each gene
+        -   Which? Is it necessary to make inference quantitatively?
+
+### Key Statistical Methods
+
+#### Shapley values / SHAP (SHapley Additive exPlanations)
+
+-   A method for explaining machine learning method predictions.
+
+-   Core problem: I have trained model that predicts something (like gene expression). I would like to know:
+
+    -   Which features (e.g. tile) contributed most to a prediction?
+
+    -   How much did each feature contribute?
+
+-   More detailed introduction is in `(path_to)/learning-blogs/MachineLearning/SHAP.qmd`.
+
+-   They use **SHAP** to determine which tiles are most important for predictions in specific cell types. This helps idendity cell-type-specific enhancers.
+
+    -   For their linear model (Poisson regression), SHAP has a simple form:
+
+        $$
+        \text{shap}_t = W_t \times (X_{*,t} - \text{mean}(X_{*,t})),
+        $$
+
+        -   $\text{shap}_t$ = Shapley value of a particular tile $t$.
+
+        -   $W_t$ = regression coefficient for tile $t$
+
+        -   $X_{*,t}$ = accessibility value for tile $t$ in a specific cell
+
+        -   $\text{mean}(X_{*,t})$ = average accessibility for tile $t$ across all cells
+
+#### Validation approaches
+
+-   Purpose: validate their predictions using independent experimental evidence, which support their claim: "**The tiles with high regression coefficients / high Shapley values represent TRUE functional regulatory elements (enhancers) for that gene.**"
+
+-   Validation 0: Correlation with held-out test cells (Spearman $\rho$) - More like evaluation
+
+    -   "Does SCARlink perform better than existing methods ON AVERAGE" & "For which specific genes does SCARlink perform significantly better (or worse)"
+
+-   Validation 1: Promoter Capture Hi-C (PCHi-C) analysis
+
+    -   "Do SCARlink-predicted enhancers physically interact with gene promoters?"
+
+-   Validation 2: Enrichment of fine-mapped GWAS variants
+
+    -   "Do SCARlink-predicted enhancers contain genetic variants associated with disease?"
+
+-   Validation 3: Enrichment of eQTLs (expression quantitative trait loci)
+
+    -   "Do SCARlink-predicted enhancers contain genetic variants that affect gene expression?"
+
+-   Validation 4: Stratified LD Score Regression (S-LDSC) for heritability analysis
+
+    -   "Do SCARlink-predicted enhancers contribute to disease heritability?"
+
+-   Validation 5: RegulomeDB
+
+    -   "Do SCARlink-predicted enhancers contain variants with experimental evidence of regulatory function?"
+
+### Performance
+
+SCARlink significantly outperformed existing methods like:
+
+-   ArchR gene scores (simple aggregation of accessibility)
+
+-   DORC scores (domain of regulatory chromatin)
+
+### Potential Applications
+
+This could help:
+
+-   Identify which genetic variants actually affect disease risk
+
+-   Understand which cell types are relevant for specific diseases
+
+-   Map enhancer-gene connections without experimental validation (?)
+
+### Summary
+
+SCARlink choose features/variables (i.e., "tiles"/genome) based on **L2-regularized Poisson regression model (coefficient estimation) for prediction + Shapley value (selection based on importance/contribution)**.
 
 ------------------------------------------------------------------------
 
